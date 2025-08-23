@@ -39,7 +39,7 @@ export default function ExtractWisdomYouTubeFixed() {
   const preferences = getPreferenceValues<Preferences>();
 
   const getFabricPath = () => {
-    return preferences.fabricInstallPath || "/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric";
+    return preferences.fabricInstallPath || "fabric";
   };
 
   const isYouTubeUrl = (text: string): boolean => {

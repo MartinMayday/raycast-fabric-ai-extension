@@ -8,6 +8,12 @@
   "license": "MIT",
   "commands": [
     {
+      "name": "extract-wisdom-test-debug",
+      "title": "Extract Wisdom (Test Debug)",
+      "description": "Debug version with comprehensive testing and logging for troubleshooting",
+      "mode": "view"
+    },
+    {
       "name": "extract-wisdom-youtube-fixed",
       "title": "Extract Wisdom (YouTube Fixed)",
       "description": "Fixed version with proper YouTube transcript extraction using yt command",
