@@ -1,0 +1,25 @@
+{
+  "enabled": true,
+  "name": "Documentation Sync",
+  "description": "Listens to TypeScript source files, configuration files, and package files in the Raycast extension projects and triggers documentation updates in README and docs folder when changes occur.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "fabricai-extension/src/**/*.tsx",
+      "fabricai-extension/src/**/*.ts",
+      "raycast-fabricAI/src/**/*.tsx",
+      "raycast-fabricAI/src/**/*.ts",
+      "fabricai-extension/package.json",
+      "raycast-fabricAI/package.json",
+      "fabricai-extension/tsconfig.json",
+      "raycast-fabricAI/tsconfig.json",
+      "fabricai-extension/.eslintrc.js",
+      "fabricai-extension/jest.config.js"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Source code or configuration files have been modified in the Raycast Fabric AI extension project. Please review the changes and update the documentation accordingly. Focus on updating the README.md files and any documentation in the docs/ folders to reflect any new features, API changes, configuration updates, or structural modifications. Ensure the documentation accurately represents the current state of the codebase, including any new commands, components, or functionality that may have been added or modified."
+  }
+}
