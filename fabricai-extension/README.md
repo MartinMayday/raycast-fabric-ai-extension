@@ -7,7 +7,12 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
 ### 🧠 Intelligent Wisdom Extraction
 - Extract valuable insights from any text using Fabric AI's `extract_wisdom` pattern
 - Support for multiple content types: Plain text, HTML, Markdown, URLs, and YouTube videos with automatic detection
-- **YouTube Integration**: Direct transcript extraction from YouTube videos using `yt --transcript` command
+- **Structured Output Parsing**: Advanced parsing of wisdom into organized sections (summary, ideas, insights, quotes, habits, facts, references, takeaway, recommendations)
+- **Professional CSV Export**: Automatic export to structured 20-column spreadsheet for comprehensive data analysis and content tracking workflows
+- **Enhanced Debug Logging**: File-based logging system with comprehensive troubleshooting and analysis capabilities
+- **YouTube Integration**: Multiple approaches including direct transcript extraction, optimized title extraction, and channel metadata extraction
+- **API Credit Management**: Built-in token limiting (`--tokens 4000`) to prevent quota exhaustion in final implementation
+- **Enhanced Error Handling**: Specific guidance for API credits (402), authentication (401), and processing errors
 - Intelligent URL processing with built-in web scraping capabilities
 - Automatic content preprocessing and optimization
 - Large content chunking for processing extensive documents
@@ -52,6 +57,26 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
 - Automatic retry mechanisms for transient failures
 - Comprehensive error logging and debugging
 
+### 📊 Enhanced Production Features (Latest Implementation)
+
+#### Structured Data Analysis
+- **Comprehensive Output Parsing**: Automatic parsing of Fabric AI's structured wisdom output into organized components
+- **Rich Data Model**: Extended data structure with 15+ fields including summary, ideas, insights, quotes, habits, facts, references, takeaway, and recommendations
+- **Content Metadata Extraction**: Automatic extraction of author information, hooks, CTA URLs, and content classification
+- **YouTube Metadata**: Dual extraction of video title and channel information for comprehensive content analysis
+
+#### Professional Export System
+- **20-Column CSV Export**: Structured spreadsheet export matching professional content analysis workflows
+- **Automatic Data Escaping**: Proper CSV formatting with quote escaping and data sanitization
+- **Incremental Data Appending**: Automatic header management and data appending for continuous analysis
+- **Export Path Configuration**: Configurable export directory with automatic directory creation
+
+#### Advanced Debug Infrastructure
+- **File-Based Logging**: Persistent logging to Raycast's support directory with timestamp tracking
+- **Comprehensive Debug Information**: Detailed process tracking, command execution logs, and error classification
+- **Log Sharing**: One-click debug log copying to clipboard for troubleshooting and support
+- **Production Monitoring**: Real-time process monitoring with detailed feedback and error tracking
+
 ## Installation
 
 ### Prerequisites
@@ -70,11 +95,27 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
    fabric --setup
    ```
 
-3. **For YouTube Integration** (optional): Ensure YouTube transcript extraction is configured
+3. **For YouTube Integration** (optional): Choose your preferred method
+   
+   **Method 1 - Direct Fabric AI Integration** (Recommended):
    ```bash
    # YouTube integration should be included with Fabric AI
-   # Verify yt command is available
-   yt --help
+   # Test YouTube functionality
+   fabric --youtube="https://www.youtube.com/watch?v=example" --transcript --pattern extract_wisdom
+   ```
+   
+   **Method 2 - Alternative yt-dlp Integration** (Fallback):
+   ```bash
+   # Install yt-dlp for alternative YouTube processing
+   brew install yt-dlp
+   # or
+   pip install yt-dlp
+   
+   # Install html2text for URL processing
+   brew install html2text
+   
+   # Test yt-dlp functionality (simplified approach)
+   yt-dlp --write-auto-sub --sub-lang en --skip-download --output "/tmp/%(id)s.%(ext)s" "https://www.youtube.com/watch?v=example"
    ```
 
 4. **Verify Installation**: Test that Fabric AI is working
@@ -100,7 +141,12 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
 
 The extension includes multiple implementation variants:
 
-- **`extract-wisdom-youtube-fixed.tsx`** (Latest): Enhanced version with YouTube transcript extraction, URL processing, and improved error handling
+- **`extract-wisdom-enhanced-production.tsx`** (Latest Enhanced Production): Most advanced implementation with structured output parsing, professional CSV export system, enhanced debug logging, spawn-based process control, and comprehensive data analysis capabilities for professional workflows
+- **`extract-wisdom-ultimate.tsx`** (Previous Ultimate): Advanced implementation with spawn-based process control, stream processing, file system integration, interactive debug logging, and superior error handling for maximum reliability and performance
+- **`extract-wisdom-production.tsx`** (Production): Production-ready version with robust YouTube processing using `yt-dlp --get-title`, intelligent path detection, built-in testing, and comprehensive error handling
+- **`extract-wisdom-final.tsx`** (Previous Production): Production-ready version with API credit management, optimized YouTube processing using `yt-dlp --print "%(title)s"`, and enhanced error handling for API credits (402) and authentication (401) issues
+- **`extract-wisdom-youtube-fixed.tsx`** (Enhanced YouTube): Enhanced version with direct Fabric AI YouTube integration using `--youtube="URL"` flag
+- **`extract-wisdom-youtube-working.tsx`** (Alternative): Uses `yt-dlp` directly with simplified command pipeline for YouTube transcript extraction when Fabric AI's built-in support isn't available
 - **`extract-wisdom-enhanced.tsx`**: Enhanced version with URL processing, content type detection, and improved UX
 - **`extract-wisdom-fixed.tsx`**: Production-ready with latest fixes and icon compatibility
 - **`extract-wisdom-working.tsx`**: Stable baseline implementation  
@@ -108,6 +154,26 @@ The extension includes multiple implementation variants:
 - **`extract-wisdom-debug.tsx`**: Development version with detailed diagnostics
 
 Configure your preferred implementation in the Raycast extension settings or package.json.
+
+**Recommended for Production**: Use `extract-wisdom-enhanced-production.tsx` for the most advanced production deployments with comprehensive data analysis, structured export, and professional workflow integration. Alternatively, use `extract-wisdom-ultimate.tsx` for advanced process control with spawn-based processing and file system integration, `extract-wisdom-production.tsx` for standard production use with robust YouTube processing, or `extract-wisdom-final.tsx` if you need API credit management with token limiting.
+
+#### Key Differences Between Production Implementations
+
+| Feature | Ultimate | Production | Final | YouTube-Fixed | YouTube-Working |
+|---------|----------|------------|-------|---------------|-----------------|
+| Process Control | ✅ Spawn-based | ❌ exec-based | ❌ exec-based | ❌ exec-based | ❌ exec-based |
+| Stream Processing | ✅ Real-time | ❌ No | ❌ No | ❌ No | ❌ No |
+| File System Integration | ✅ Enhanced logging + UI | ❌ No | ❌ No | ❌ No | ❌ No |
+| YouTube Method | `yt-dlp --get-title` | `yt-dlp --get-title` | `yt-dlp --print "%(title)s"` | `fabric --youtube="URL"` | `yt-dlp` direct |
+| Path Detection | ❌ Hardcoded | ✅ Smart detection | ❌ Manual path | ❌ Manual path | ❌ Manual path |
+| Built-in Testing | ✅ Spawn-based | ✅ Integrated | ❌ No | ❌ No | ❌ No |
+| API Credit Management | ❌ No | ❌ No | ✅ `--tokens 4000` | ❌ No | ❌ No |
+| Fallback Mechanisms | ✅ Video ID fallback | ✅ Video ID fallback | ❌ No | ❌ No | ✅ Multiple methods |
+| Content Length Default | 2000 chars | 2000 chars | 1000 chars | 10000 chars | 10000 chars |
+| Buffer Management | ✅ Stream-based | 5MB | 2MB | 5MB | 5MB |
+| Timeout Handling | ✅ Process-level | ❌ Command-level | ❌ Command-level | ❌ Command-level | ❌ Command-level |
+| Icon Compatibility | ⚠️ Needs fixes | ⚠️ Needs fixes | ⚠️ Needs fixes | ✅ Compatible | ✅ Compatible |
+| Debug Interface | ✅ Interactive UI | ❌ No | ❌ No | ❌ No | ❌ No |
 
 ## Usage
 
@@ -166,17 +232,21 @@ The extension includes built-in testing functionality to verify your Fabric AI i
 
 ```
 src/
-├── extract-wisdom-youtube-fixed.tsx # Latest version with YouTube transcript extraction and enhanced error handling
-├── extract-wisdom-enhanced.tsx      # Enhanced version with URL processing and content type detection
-├── extract-wisdom-fixed.tsx         # Production-ready implementation with robust error handling
-├── extract-wisdom-working.tsx       # Stable working version with core functionality
-├── extract-wisdom-simple.tsx        # Simplified implementation for basic use cases
-├── extract-wisdom-debug.tsx         # Debug version with detailed logging and diagnostics
-├── __mocks__/                       # Jest mocks for @raycast/api
+├── extract-wisdom-ultimate.tsx        # Latest ultimate version with spawn-based process control, stream processing, file system integration, and interactive debug logging
+├── extract-wisdom-production.tsx      # Production version with robust YouTube processing and built-in testing
+├── extract-wisdom-final.tsx           # Previous production version with API credit management
+├── extract-wisdom-youtube-fixed.tsx   # Enhanced version with direct Fabric AI YouTube integration
+├── extract-wisdom-youtube-working.tsx # Alternative YouTube processing using yt-dlp directly
+├── extract-wisdom-enhanced.tsx        # Enhanced version with URL processing and content type detection
+├── extract-wisdom-fixed.tsx           # Production-ready implementation with robust error handling
+├── extract-wisdom-working.tsx         # Stable working version with core functionality
+├── extract-wisdom-simple.tsx          # Simplified implementation for basic use cases
+├── extract-wisdom-debug.tsx           # Debug version with detailed logging and diagnostics
+├── __mocks__/                         # Jest mocks for @raycast/api
 │   └── @raycast/
 │       └── api.ts
-└── constants/                       # Shared constants and configuration
-    └── index.ts                     # Error messages, defaults, storage keys
+└── constants/                         # Shared constants and configuration
+    └── index.ts                       # Error messages, defaults, storage keys
 ```
 
 ### Service Layer
@@ -295,10 +365,21 @@ class HistoryManager {
 - Run `fabric --setup` to refresh pattern configurations
 
 **YouTube Processing Issues**
-- Ensure `yt` command is installed and configured with Fabric AI
-- Check YouTube API configuration: `fabric --setup`
+
+*Primary Method (youtube-fixed.tsx):*
+- Ensure YouTube integration is configured with Fabric AI: `fabric --setup`
+- Test YouTube functionality: `fabric --youtube="URL" --transcript --pattern extract_wisdom`
 - Verify video has captions/transcript available
 - Some videos may be private or have restricted access
+- Check command format uses `--youtube="URL"` (with equals sign, no space)
+
+*Alternative Method (youtube-working.tsx):*
+- Install required dependencies: `brew install yt-dlp html2text`
+- Test yt-dlp: `yt-dlp --write-auto-sub --sub-lang en --skip-download --output "/tmp/%(id)s.%(ext)s" "URL"`
+- Ensure video has auto-generated or manual captions
+- Check file system permissions for `/tmp/` directory access
+- Uses simplified step-by-step command pipeline for better reliability
+- Use when Fabric AI's built-in YouTube support is unavailable
 
 **Command Format Issues**
 - The extension uses `--pattern extract_wisdom` command format (updated from `-p`)
@@ -307,8 +388,29 @@ class HistoryManager {
 
 **Icon Display Issues**
 - Extension uses Raycast-compatible icons (Stars, QuestionMark, etc.)
+- **Ultimate Implementation**: Uses incompatible icons (`Icon.ArrowLeft`, `Icon.Bug`, `Icon.Wand`)
+- **Production Implementation**: May use incompatible icons (`Icon.ArrowLeft`, `Icon.Bug`, `Icon.Wand`)
+- **Quick Fix**: Replace with `Icon.ArrowCounterClockwise`, `Icon.ExclamationMark`, and `Icon.Star` respectively
 - Update to latest Raycast version if icons don't display
 - Restart Raycast if UI elements appear broken
+
+**Process Control Issues** (Enhanced Production & Ultimate Implementations)
+- **Spawn Process Failures**: Check if Fabric AI path is accessible and executable
+- **Stream Processing Errors**: Verify proper stdout/stderr handling in spawn configuration
+- **Timeout Issues**: Default 60-second timeout may need adjustment for large content
+- **Process Cleanup**: Ensure proper process termination to avoid zombie processes
+
+**CSV Export Issues** (Enhanced Production Implementation)
+- **Export Path Permissions**: Ensure write permissions to the configured export directory (default: Raycast support path)
+- **CSV File Access**: Check if the CSV file is not open in another application during export
+- **Data Escaping**: CSV export automatically handles quote escaping and special characters
+- **File Size**: Large CSV files may impact performance; consider periodic cleanup
+
+**Debug Logging Issues** (Enhanced Production Implementation)
+- **Log Directory Access**: Verify write permissions to Raycast's support directory for log file creation
+- **Log File Size**: Monitor log file growth; logs are appended continuously during use
+- **Log Sharing**: Use the built-in "Copy Debug Logs" feature for troubleshooting and support
+- **Log Persistence**: Logs persist across sessions for comprehensive debugging
 
 ### Debug Mode
 
@@ -316,6 +418,12 @@ Enable debug logging by setting the environment variable:
 ```bash
 export FABRIC_DEBUG=true
 ```
+
+**Interactive Debug Interface** (Ultimate Implementation):
+- Real-time log entry tracking with live count display
+- One-click debug log copying to clipboard for easy sharing
+- Persistent file-based logging in Raycast's support directory
+- Comprehensive troubleshooting information for support requests
 
 ## Contributing
 

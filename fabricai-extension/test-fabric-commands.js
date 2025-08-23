@@ -99,16 +99,16 @@ async function runTests() {
     `echo "${TEST_CONFIG.testText}" | fabric --pattern extract_wisdom`
   ));
   
-  // Test 5: Test YouTube URL extraction (the main issue)
+  // Test 5: Test YouTube URL extraction (the main issue) - FIXED SYNTAX
   results.push(await testCommand(
-    'YouTube Wisdom Extraction',
-    `fabric --youtube "${TEST_CONFIG.testYouTubeUrl}" --transcript --pattern extract_wisdom`
+    'YouTube Wisdom Extraction (Fixed Syntax)',
+    `fabric --youtube="${TEST_CONFIG.testYouTubeUrl}" --transcript --pattern extract_wisdom`
   ));
   
   // Test 6: Alternative YouTube command format
   results.push(await testCommand(
-    'Alternative YouTube Command',
-    `fabric --youtube "${TEST_CONFIG.testYouTubeUrl}" --pattern extract_wisdom`
+    'Alternative YouTube Command (Short Flag)',
+    `fabric -y="${TEST_CONFIG.testYouTubeUrl}" --transcript --pattern extract_wisdom`
   ));
   
   // Test 7: Check if yt-dlp is available (fabric dependency)

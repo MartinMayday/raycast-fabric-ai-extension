@@ -8,45 +8,15 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "extract-wisdom-test-debug",
-      "title": "Extract Wisdom (Test Debug)",
-      "description": "Debug version with comprehensive testing and logging for troubleshooting",
-      "mode": "view"
-    },
-    {
-      "name": "extract-wisdom-youtube-fixed",
-      "title": "Extract Wisdom (YouTube Fixed)",
-      "description": "Fixed version with proper YouTube transcript extraction using yt command",
-      "mode": "view"
-    },
-    {
-      "name": "extract-wisdom-enhanced",
-      "title": "Extract Wisdom (Enhanced)",
-      "description": "Enhanced version with URL processing and advanced clipboard features",
-      "mode": "view"
-    },
-    {
-      "name": "extract-wisdom-fixed",
-      "title": "Extract Wisdom (Fixed)",
-      "description": "Fixed version with correct Fabric AI path and commands",
-      "mode": "view"
-    },
-    {
-      "name": "extract-wisdom-debug",
-      "title": "Extract Wisdom (Debug)",
-      "description": "Debug version with detailed logging to troubleshoot issues",
-      "mode": "view"
-    },
-    {
-      "name": "extract-wisdom-working",
-      "title": "Extract Wisdom (Working)",
-      "description": "Extract wisdom from content using FabricAI - Simple Working Version",
+      "name": "extract-wisdom-ultimate",
+      "title": "Extract Wisdom",
+      "description": "Extract wisdom from text, URLs, or YouTube videos using Fabric AI with CSV export and debug logging",
       "mode": "view"
     },
     {
       "name": "extract-wisdom-from-selection-working",
-      "title": "Extract Wisdom from Selection (Working)",
-      "description": "Extract wisdom from selected text - Simple Working Version",
+      "title": "Extract Wisdom from Selection",
+      "description": "Extract wisdom from selected text - Quick access version",
       "mode": "no-view",
       "arguments": [
         {
@@ -84,6 +54,14 @@
       "required": false,
       "default": "30",
       "placeholder": "30"
+    },
+    {
+      "name": "exportPath",
+      "title": "Export Path",
+      "description": "Directory path for CSV exports (leave empty for default)",
+      "type": "textfield",
+      "required": false,
+      "placeholder": "~/Documents/FabricExports"
     }
   ],
   "dependencies": {

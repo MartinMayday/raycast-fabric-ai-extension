@@ -62,13 +62,78 @@ This documentation is organized into several key sections:
 
 The extension includes multiple implementation variants for different use cases:
 
-### `extract-wisdom-youtube-fixed.tsx` (Latest)
-- **YouTube transcript extraction** with direct `yt --transcript` command integration
+### `extract-wisdom-enhanced-production.tsx` (Latest Enhanced Production)
+- **Advanced structured output parsing** with comprehensive parsing of Fabric AI's wisdom output into organized sections (summary, ideas, insights, quotes, habits, facts, references, takeaway, recommendations)
+- **Professional CSV export system** with automatic export to structured 20-column spreadsheet for comprehensive data analysis and content tracking workflows
+- **Enhanced debug logging infrastructure** with file-based persistence in Raycast's support directory and comprehensive troubleshooting capabilities
+- **Spawn-based process control** using Node.js `spawn` for superior process management with real-time stdout/stderr handling and proper timeout management
+- **Enhanced YouTube processing** with dual extraction of both video title and channel information using `yt-dlp --get-title` and `--print "%(uploader)s"`
+- **Structured data management** with rich data model including parsed wisdom components (author, hook, summary, takeaway, CTA URLs, etc.)
+- **Production-ready export pipeline** with automatic CSV generation, proper data escaping, headers, and incremental data appending
+- **Advanced content analysis** with automatic CTA URL extraction, structured metadata, and comprehensive content type classification
+
+### `extract-wisdom-ultimate.tsx` (Previous Ultimate)
+- **Advanced process control** using Node.js `spawn` instead of `exec` for superior process management and reliability
+- **Hardcoded path configuration** using specific absolute paths for Fabric AI (`/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric`) and yt-dlp (`/opt/homebrew/bin/yt-dlp`) for maximum reliability
+- **Stream-based processing** with real-time stdout/stderr handling for immediate feedback and better error detection
+- **Enhanced YouTube processing** using `yt-dlp --get-title` with intelligent fallback to video ID extraction
+- **Built-in connection testing** using the same spawn-based approach for consistent testing methodology
+- **Process lifecycle management** with proper timeout handling (60 seconds) and graceful process termination
+- **Advanced error handling** with process-level error classification and stream-based error detection
+- **Content type tracking** with comprehensive detection and visual indicators (🎥📝📋)
+- **No buffer limitations** through stream processing, handling large content more efficiently
+- **File system integration** with enhanced logging capabilities and data persistence using `writeFileSync`, `existsSync`, `mkdirSync`, and `appendFileSync`
+- **Environment awareness** with improved Raycast environment integration for better system context and path management
+- **Interactive debug logging** with real-time log entry tracking, persistent file storage, and one-click clipboard sharing for comprehensive troubleshooting
+
+### `extract-wisdom-mission-complete.tsx` (Previous Mission Complete)
+- **Hardcoded path configuration** using specific absolute paths for Fabric AI (`/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric`) and yt-dlp (`/opt/homebrew/bin/yt-dlp`) for reliable execution
+- **Robust YouTube processing** using `yt-dlp --get-title` with hardcoded path for consistent YouTube title extraction
+- **Built-in connection testing** with integrated Fabric AI connection testing showing current path configuration
+- **Enhanced error classification** with specific handling for API credits (402), authentication (401), and pattern availability errors
+- **Fallback mechanisms** for graceful degradation when YouTube extraction fails, using video ID and URL as fallback
+- **Explicit shell execution** using `/bin/zsh` shell for all command execution with comprehensive environment variable handling
+- **Optimized content processing** with configurable length limits (default 2000 characters) and 5MB buffer management
+- **Comprehensive error guidance** with actionable messages for credit issues, authentication failures, and YouTube extraction problems
+- **Visual content type indicators** (🎥 YouTube, 📝 text, 📋 clipboard) with streamlined user experience
+
+### `extract-wisdom-production.tsx` (Previous Production)
+- **Robust YouTube processing** using `yt-dlp --get-title` for reliable title extraction with intelligent path detection
+- **Smart path detection** automatically finds yt-dlp across common installation paths (`/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin`, system PATH)
+- **Enhanced error classification** with specific handling for API credits (402), authentication (401), and pattern availability errors
+- **Built-in testing functionality** with integrated Fabric AI connection testing and detailed feedback
+- **Fallback mechanisms** for graceful degradation when YouTube extraction fails, using video ID and URL as fallback
+- **Optimized content processing** with configurable length limits (default 2000 characters) and 5MB buffer management
+- **Comprehensive error guidance** with actionable messages for credit issues, authentication failures, and YouTube extraction problems
+- **Visual content type indicators** (🎥 YouTube, 📝 text, 📋 clipboard) with streamlined user experience
+
+### `extract-wisdom-final.tsx` (Previous Production)
+- **Production-ready YouTube processing** using `yt-dlp --print "%(title)s"` for reliable title extraction
+- **API credit management** with `--tokens 4000` flag to prevent quota exhaustion and API limit issues
+- **Enhanced error classification** with specific handling for API credits (402), authentication (401), and YouTube processing errors
+- **Optimized content processing** with configurable length limits (default 1000 characters) and 2MB buffer management
+- **Comprehensive error guidance** with actionable messages for credit issues, authentication failures, and YouTube extraction problems
+- **Visual content type indicators** (🎥 YouTube, 📝 text, 📋 clipboard) with streamlined user experience
+
+### `extract-wisdom-youtube-fixed.tsx` (Enhanced YouTube)
+- **YouTube transcript extraction** with direct `fabric --youtube="URL" --transcript --pattern extract_wisdom` command integration
 - **Smart content detection** with automatic YouTube URL, URL, text, and clipboard type recognition
-- **Enhanced command format** using `--pattern extract_wisdom` for better compatibility
+- **Enhanced command format** using `--pattern extract_wisdom` and proper `--youtube="URL"` syntax for better shell compatibility
 - **YouTube-specific error handling** with API configuration guidance and transcript availability checks
 - **Visual content type indicators** (🎥 YouTube, 🔗 URL, 📝 text, 📋 clipboard)
 - **Advanced sharing features** with content-type-specific formatting and source attribution
+
+### `extract-wisdom-youtube-working.tsx` (Alternative YouTube Method)
+- **Alternative YouTube Processing** using `yt-dlp` directly for transcript extraction when Fabric AI's built-in YouTube support encounters issues
+- **Simplified YouTube Integration** with step-by-step `yt-dlp --write-auto-sub --sub-lang en` command pipeline
+- **Enhanced URL Processing** using `curl` and `html2text` for general web content extraction
+- **Improved Command Pipeline** with clearer transcript extraction: `yt-dlp --print title → yt-dlp --write-auto-sub → cat /tmp/*.vtt → fabric --pattern extract_wisdom`
+- **Better Error Handling** with fallback mechanism when transcript extraction fails
+- **Temporary File Management** using `/tmp/` directory for organized subtitle file storage
+- **Processing Optimization** limiting transcript to 500 lines for better performance
+- **Content Type Tracking** with comprehensive detection and visual indicators throughout the workflow
+- **Dependency Requirements** for `yt-dlp` and `html2text` external tools
+- **Use Case**: When Fabric AI's `--youtube` flag is not available, not working, or when you need more control over transcript extraction
 
 ### `extract-wisdom-enhanced.tsx`
 - **Smart content detection** with automatic URL, text, and clipboard type recognition
@@ -100,9 +165,63 @@ The extension includes multiple implementation variants for different use cases:
 - **Detailed logging** for troubleshooting installation issues
 - **Step-by-step diagnostics** for Fabric AI connectivity
 
+## 🎯 Implementation Selection Guide
+
+### When to Use Each Implementation
+
+**`extract-wisdom-enhanced-production.tsx` (Latest Enhanced Production)**
+- ✅ **Best for**: Production use with comprehensive data analysis, structured export, and advanced content processing
+- ✅ **Features**: Structured output parsing, CSV export system, debug logging, spawn-based process control, YouTube metadata extraction
+- ✅ **Use when**: You need comprehensive content analysis with structured data export for professional workflows and data analysis
+- ⚠️ **Note**: Includes advanced data parsing, 20-column CSV export, and comprehensive logging infrastructure
+
+**`extract-wisdom-ultimate.tsx` (Previous Ultimate)**
+- ✅ **Best for**: Production use with advanced process control and maximum reliability
+- ✅ **Features**: Spawn-based process control, stream processing, file system integration, advanced error handling, built-in testing, interactive debug logging
+- ✅ **Use when**: You need the most advanced process management with real-time feedback, superior error handling, enhanced logging capabilities, and comprehensive debugging tools
+- ⚠️ **Note**: Uses hardcoded paths, spawn-based process control, file system operations, and interactive debug interface for maximum reliability and troubleshooting
+
+**`extract-wisdom-mission-complete.tsx` (Previous Mission Complete)**
+- ✅ **Best for**: Production use with hardcoded paths for maximum reliability and built-in testing
+- ✅ **Features**: Hardcoded path configuration, connection testing with path verification, comprehensive error handling
+- ✅ **Use when**: You need maximum reliability with specific installation paths and built-in diagnostics
+- ⚠️ **Note**: Uses hardcoded paths (`/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric` and `/opt/homebrew/bin/yt-dlp`)
+
+**`extract-wisdom-production.tsx` (Previous Production)**
+- ✅ **Best for**: Production use with robust YouTube processing and built-in testing
+- ✅ **Features**: Smart path detection, fallback mechanisms, connection testing, comprehensive error handling
+- ✅ **Use when**: You need reliable YouTube processing with intelligent path detection and built-in diagnostics
+- ⚠️ **Note**: Uses `yt-dlp --get-title` for YouTube (automatically detects yt-dlp installation paths)
+
+**`extract-wisdom-final.tsx` (Alternative Production)**
+- ✅ **Best for**: Production use with API credit management
+- ✅ **Features**: Token limits, enhanced error handling, optimized YouTube processing
+- ✅ **Use when**: You need reliable API credit management and streamlined YouTube title extraction
+- ⚠️ **Note**: Uses `yt-dlp --print "%(title)s"` for YouTube (requires yt-dlp installation)
+
+**`extract-wisdom-youtube-fixed.tsx` (Best for Full YouTube Integration)**
+- ✅ **Best for**: Full YouTube transcript extraction with Fabric AI's built-in support
+- ✅ **Features**: Direct transcript extraction, comprehensive sharing, advanced content detection
+- ✅ **Use when**: You need full YouTube transcript processing and Fabric AI's YouTube integration is available
+- ⚠️ **Note**: Requires Fabric AI with YouTube support configured
+
+**`extract-wisdom-youtube-working.tsx` (Fallback for YouTube)**
+- ✅ **Best for**: Alternative YouTube processing when Fabric AI's YouTube support isn't available
+- ✅ **Features**: Direct yt-dlp integration, simplified command pipeline, reliable fallback
+- ✅ **Use when**: Fabric AI's `--youtube` flag is not working or not available
+- ⚠️ **Note**: Requires `yt-dlp` and `html2text` external dependencies
+
 ## 🎯 Key Features
 
 ### 🆕 Enhanced Features (Latest Version)
+
+#### Advanced Data Analysis (Enhanced Production)
+- **Structured Output Parsing**: Comprehensive parsing of Fabric AI's wisdom output into organized sections (summary, ideas, insights, quotes, habits, facts, references, takeaway, recommendations)
+- **Professional CSV Export**: Automatic export to structured 20-column spreadsheet for comprehensive data analysis and content tracking workflows
+- **Enhanced Debug Logging**: File-based logging system with persistent storage in Raycast's support directory for comprehensive troubleshooting
+- **YouTube Metadata Extraction**: Dual extraction of both video title and channel information for comprehensive content analysis
+- **CTA URL Detection**: Automatic extraction of call-to-action URLs from wisdom content for marketing analysis
+- **Rich Data Model**: Extended data structure with 15+ structured fields for professional content analysis workflows
 
 #### Smart Content Detection
 - **Automatic YouTube URL Recognition**: Detects YouTube URLs and applies transcript extraction
@@ -119,6 +238,7 @@ The extension includes multiple implementation variants for different use cases:
 - **Contextual Actions**: Different actions based on content type (share, copy, back)
 - **Better Error Messages**: Content-type-specific error guidance and recovery suggestions
 - **Improved Sharing**: Formatted sharing with source attribution and metadata
+- **Professional Export Actions**: One-click CSV export, summary copying, and takeaway extraction
 
 ## 🎯 Core Features
 
@@ -261,18 +381,45 @@ npm run test:coverage # Coverage report
    - Verify the `extract_wisdom` pattern is available
    - Check that API keys are properly configured
 
-4. **Icon/UI Issues**
+4. **API Credit Issues** (Production/Final Implementation)
+   - **402 Payment Required**: Add more credits at https://openrouter.ai/settings/credits
+   - **401 Unauthorized**: Check API configuration with `fabric --setup`
+   - **Token Limits**: Final implementation uses `--tokens 4000` to prevent quota issues
+   - **Content Length**: Reduce content length if hitting API limits (production default: 2000 chars, final default: 1000 chars)
+   - **Built-in Testing**: Use production implementation's built-in "Test Fabric AI Connection" feature for diagnostics
+
+5. **Icon/UI Issues**
    - Extension uses Raycast-compatible icons (Stars, QuestionMark, Forward, etc.)
+   - **Production Implementation**: Uses `Icon.ArrowLeft`, `Icon.Bug`, and `Icon.Wand` which may need updates to compatible icons
+   - **Recommended Fixes**: Replace with `Icon.ArrowCounterClockwise`, `Icon.ExclamationMark`, and `Icon.Star` respectively
    - Enhanced version includes content type indicators (📝, 🔗, 📋)
    - Ensure you're using the latest version of Raycast
    - Try restarting Raycast if UI elements don't display correctly
 
-5. **YouTube Processing Issues** (YouTube-Fixed Version)
-   - Ensure `yt` command is installed and configured with Fabric AI
-   - Check YouTube API configuration: `fabric --setup`
-   - Verify video has captions/transcript available
-   - Some videos may be private or have restricted access
-   - Error "yt: command not found" indicates missing YouTube integration
+5. **YouTube Processing Issues**
+
+*Production Implementation (production.tsx):*
+- **Smart Path Detection**: Automatically detects yt-dlp across common paths (`/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin`, system PATH)
+- **Install yt-dlp**: `brew install yt-dlp` or `pip install yt-dlp`
+- **Fallback Mechanism**: Uses video ID and URL as fallback when title extraction fails
+- **Built-in Testing**: Use "Test Fabric AI Connection" for diagnostics
+- **Error Handling**: Provides specific guidance for yt-dlp installation and path issues
+
+*YouTube-Fixed Version:*
+- Ensure `yt` command is installed and configured with Fabric AI
+- Check YouTube API configuration: `fabric --setup`
+- Verify video has captions/transcript available
+- Some videos may be private or have restricted access
+- Error "yt: command not found" indicates missing YouTube integration
+
+6. **Alternative YouTube Processing** (YouTube-Working Version)
+   - **yt-dlp Required**: Install with `brew install yt-dlp` or `pip install yt-dlp`
+   - **html2text Required**: Install with `brew install html2text` for URL processing
+   - **Simplified Pipeline**: Uses step-by-step approach: `yt-dlp --print title → yt-dlp --write-auto-sub → cat /tmp/*.vtt → fabric`
+   - **Improved Error Handling**: Better fallback with clear error messages when transcript extraction fails
+   - **Temporary File Management**: Uses `/tmp/` directory for organized subtitle file storage
+   - **Processing Optimization**: Limits transcript to 500 lines for better performance
+   - **Use When**: Fabric AI's built-in `--youtube` flag is not working or not available
 
 6. **URL Processing Issues** (Enhanced Version)
    - Enhanced version automatically detects URLs and applies specialized processing
@@ -348,6 +495,15 @@ While the extension doesn't directly support scripting, it integrates well with:
 
 ### Recently Implemented
 
+- **✅ Ultimate Implementation**: Latest ultimate version with spawn-based process control, stream processing, and advanced error handling
+- **✅ Process Control**: Advanced process management using Node.js spawn for superior reliability and real-time feedback
+- **✅ Stream Processing**: Real-time stdout/stderr handling for immediate feedback and better error detection
+- **✅ Production Implementation**: Production-ready version with robust YouTube processing, smart path detection, and built-in testing
+- **✅ Smart Path Detection**: Automatic yt-dlp detection across common installation paths with intelligent fallback
+- **✅ Built-in Testing**: Integrated Fabric AI connection testing with detailed feedback and diagnostics
+- **✅ Final Production Implementation**: Previous production-ready version with API credit management and optimized processing
+- **✅ API Credit Management**: Automatic token limiting with `--tokens 4000` to prevent quota issues
+- **✅ Enhanced Error Classification**: Specific handling for 402 (credits), 401 (auth), and YouTube errors
 - **✅ YouTube Integration**: Direct transcript extraction from YouTube videos using `yt --transcript`
 - **✅ Enhanced Command Format**: Updated to use `--pattern extract_wisdom` for better compatibility
 - **✅ Smart Content Detection**: Automatic YouTube URL, URL, text, and clipboard type recognition
@@ -358,17 +514,19 @@ While the extension doesn't directly support scripting, it integrates well with:
 ### Planned Features
 
 - **Multiple Patterns**: Support for different Fabric AI patterns beyond extract_wisdom
-- **Batch Processing**: Process multiple items simultaneously
+- **Batch Processing**: Process multiple items simultaneously with spawn-based parallel processing
 - **Custom Templates**: User-defined output templates
 - **Integration APIs**: Connect with other productivity services
 - **Advanced Analytics**: Detailed usage statistics and insights
+- **Enhanced Stream Processing**: Advanced stream handling for even larger content processing
 
 ### Performance Improvements
 
 - **Plugin System**: Extensible architecture for custom functionality
 - **Enhanced Caching**: Advanced caching strategies for better performance
-- **Background Processing**: Worker threads for heavy operations
-- **Real-time Updates**: Live processing feedback and progress
+- **Background Processing**: Worker threads for heavy operations leveraging spawn-based architecture
+- **Real-time Updates**: Live processing feedback and progress with stream-based updates
+- **Process Pool Management**: Multiple concurrent Fabric AI processes for batch operations
 
 ## 🤝 Contributing
 

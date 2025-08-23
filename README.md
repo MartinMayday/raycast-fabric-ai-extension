@@ -5,11 +5,16 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
 ## 🚀 Features
 
 - **Extract Wisdom**: Process any text content through Fabric AI's `extract_wisdom` pattern
-- **YouTube Integration**: Direct transcript extraction and analysis from YouTube videos
+- **Advanced Process Control**: Spawn-based process management for superior reliability and real-time feedback
+- **Structured Output Parsing**: Comprehensive parsing of wisdom into organized sections (summary, ideas, insights, quotes, habits, facts, references, takeaway, recommendations)
+- **Professional CSV Export**: Automatic export to structured 20-column spreadsheet for data analysis and content tracking
+- **Enhanced Debug Logging**: File-based logging system with comprehensive troubleshooting capabilities and interactive debug interface
+- **YouTube Integration**: Direct transcript extraction and analysis from YouTube videos with metadata extraction
 - **Multi-format Support**: Handle plain text, HTML, Markdown, and URLs
 - **Clipboard Integration**: Seamlessly extract wisdom from clipboard content
 - **Selection Processing**: Extract wisdom directly from selected text in any application
 - **History Management**: Save, search, and manage extraction history
+- **Stream Processing**: Real-time stdout/stderr handling for immediate feedback
 
 ## 📦 Installation
 
@@ -59,7 +64,7 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
 
 1. Copy a YouTube URL to your clipboard
 2. Run the "Extract Wisdom" command
-3. The extension will automatically detect the YouTube URL and extract the transcript
+3. The extension will automatically detect the YouTube URL and extract the transcript using `fabric --youtube="URL" --transcript --pattern extract_wisdom`
 4. Get AI-powered insights from the video content
 
 ### Keyboard Shortcuts
@@ -108,7 +113,19 @@ npm run lint         # Run ESLint checks
 npm run fix-lint     # Auto-fix linting issues
 npm test             # Run all tests
 npm run test:watch   # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
 ```
+
+### Latest Implementation Variants
+
+The project includes multiple implementation variants for different use cases:
+
+- **`extract-wisdom-enhanced-production.tsx`**: Latest enhanced production version with structured output parsing, CSV export system, debug logging, and comprehensive data analysis capabilities
+- **`extract-wisdom-ultimate.tsx`**: Advanced implementation with spawn-based process control, stream processing, file system integration, and interactive debug logging
+- **`extract-wisdom-production.tsx`**: Production-ready version with robust YouTube processing and smart path detection
+- **`extract-wisdom-final.tsx`**: Previous production version with API credit management
+- **`extract-wisdom-youtube-fixed.tsx`**: Enhanced version with direct Fabric AI YouTube integration
+- **`extract-wisdom-youtube-working.tsx`**: Alternative YouTube processing using yt-dlp directly
 
 ### Testing
 
@@ -124,8 +141,13 @@ npm run test:ci           # Run tests for CI environment
 
 The project includes multiple implementation variants for different use cases:
 
+- **`extract-wisdom-enhanced-production.tsx`**: Latest enhanced production version with structured output parsing, CSV export system, debug logging, and comprehensive data analysis capabilities
+- **`extract-wisdom-ultimate.tsx`**: Advanced implementation with spawn-based process control, stream processing, file system integration, and interactive debug logging
+- **`extract-wisdom-production.tsx`**: Production-ready version with robust YouTube processing, smart path detection, and built-in testing
+- **`extract-wisdom-final.tsx`**: Previous production version with API credit management and optimized YouTube processing
+- **`extract-wisdom-youtube-fixed.tsx`**: Enhanced version with direct Fabric AI YouTube integration
+- **`extract-wisdom-youtube-working.tsx`**: Alternative YouTube processing using yt-dlp directly
 - **`extract-wisdom-working.tsx`**: Stable, production-ready implementation
-- **`extract-wisdom-youtube-fixed.tsx`**: Enhanced YouTube integration
 - **`extract-wisdom-debug.tsx`**: Debug version with enhanced logging
 - **`extract-wisdom-simple.tsx`**: Minimal implementation for reference
 
@@ -161,6 +183,29 @@ If you encounter any issues or have questions:
 1. Check the [documentation](fabricai-extension/docs/README.md)
 2. Search existing [issues](https://github.com/yourusername/raycast-fabric-ai-extension/issues)
 3. Create a new issue with detailed information
+
+### Common Issues
+
+**API Credit Management** (Final Implementation):
+- **402 Payment Required**: Add more credits at https://openrouter.ai/settings/credits
+- **401 Unauthorized**: Check API configuration with `fabric --setup`
+- **Token Limits**: Final implementation uses `--tokens 4000` to prevent quota issues
+- **Content Length**: Reduce content length if hitting API limits (default max: 1000 chars)
+
+**YouTube Processing**: 
+- **Production method**: Use `extract-wisdom-production.tsx` with `yt-dlp --get-title` for robust title extraction with intelligent path detection
+- Primary method: Use `fabric --youtube="URL" --transcript --pattern extract_wisdom` (note the equals sign without spaces)
+- Final method: Use `extract-wisdom-final.tsx` with `yt-dlp --print "%(title)s"` for title extraction
+- Alternative method: Use `extract-wisdom-youtube-working.tsx` with simplified `yt-dlp` pipeline for direct transcript extraction
+- Install dependencies: `brew install yt-dlp html2text` for the alternative method
+- Alternative method uses step-by-step approach with `/tmp/` file management for better reliability
+
+**Icon Compatibility** (Final Implementation):
+- Final implementation uses `Icon.ArrowLeft` and `Icon.Wand` which may cause TypeScript errors
+- Recommended fix: Replace with `Icon.ArrowCounterClockwise` and `Icon.Star` respectively
+- Other implementations use compatible Raycast icons
+
+**Fabric AI Installation**: Verify installation with `fabric --version` and ensure the `extract_wisdom` pattern is available with `fabric --list`
 
 ## 🔮 Roadmap
 
