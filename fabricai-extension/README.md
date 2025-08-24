@@ -1,10 +1,18 @@
 # FabricAI Extension for Raycast
 
-A comprehensive Raycast extension that integrates with [Fabric AI](https://github.com/danielmiessler/fabric) to extract wisdom and insights from any text content using advanced AI patterns. Features a complete pattern creation framework with 4 production-ready landing page analysis patterns and professional CSV export capabilities.
+A comprehensive Raycast extension that integrates with [Fabric AI](https://github.com/danielmiessler/fabric) to extract wisdom and insights from any text content using advanced AI patterns. Features a complete pattern creation framework with 4 production-ready landing page analysis patterns, comprehensive test content collection, and professional CSV export capabilities.
 
 ## Features
 
-### ✅ Core Features (Milestone Completed - Phase 1)
+### ✅ Core Features (Phase 1 Complete)
+
+### 🎯 Custom Landing Page Analysis Patterns (Phase 2 Complete)
+- **Analyze Wireframe Flow**: UX analysis with user flow and conversion optimization
+- **Analyze Copywriting Score**: Copywriting effectiveness with persuasion scoring  
+- **Create StoryBrand Variant**: StoryBrand SB7 framework application
+- **Create Competitive Audit**: SWOT analysis and competitive intelligence
+- **Test Content Collection**: Real-world examples across 4 content sizes (small/medium/large/XL)
+- **User Testing Guide**: Comprehensive validation scenarios for all patterns
 
 #### 🧠 Intelligent Wisdom Extraction
 - Extract valuable insights from any text using Fabric AI's `extract_wisdom` pattern
