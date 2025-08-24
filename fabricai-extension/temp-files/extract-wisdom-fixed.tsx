@@ -30,14 +30,18 @@ interface ExtractedWisdom {
 export default function ExtractWisdomFixed() {
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [extractedWisdom, setExtractedWisdom] = useState<ExtractedWisdom | null>(null);
+  const [extractedWisdom, setExtractedWisdom] =
+    useState<ExtractedWisdom | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const preferences = getPreferenceValues<Preferences>();
 
   // Use the correct fabric path based on your system
   const getFabricPath = () => {
-    return preferences.fabricInstallPath || "/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric";
+    return (
+      preferences.fabricInstallPath ||
+      "/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric"
+    );
   };
 
   const testFabricInstallation = async () => {
@@ -46,7 +50,7 @@ export default function ExtractWisdomFixed() {
 
     try {
       const fabricPath = getFabricPath();
-      
+
       await showToast({
         style: Toast.Style.Animated,
         title: "Testing",
@@ -54,11 +58,11 @@ export default function ExtractWisdomFixed() {
       });
 
       // Test with the correct command format for your version
-      const { stdout } = await execAsync(`"${fabricPath}" --help`, { 
+      const { stdout } = await execAsync(`"${fabricPath}" --help`, {
         timeout: 10000,
-        env: { ...process.env, PATH: process.env.PATH }
+        env: { ...process.env, PATH: process.env.PATH },
       });
-      
+
       await showToast({
         style: Toast.Style.Success,
         title: "Success",
@@ -66,10 +70,9 @@ export default function ExtractWisdomFixed() {
       });
 
       return true;
-
     } catch (error: any) {
       setError(`Fabric test failed: ${error.message}`);
-      
+
       await showToast({
         style: Toast.Style.Failure,
         title: "Test Failed",
@@ -101,9 +104,10 @@ export default function ExtractWisdomFixed() {
       const timeout = parseInt(preferences.timeoutSeconds || "60") * 1000;
 
       // Prepare content
-      const processedContent = content.length > maxLength 
-        ? content.substring(0, maxLength) + "..."
-        : content;
+      const processedContent =
+        content.length > maxLength
+          ? content.substring(0, maxLength) + "..."
+          : content;
 
       await showToast({
         style: Toast.Style.Animated,
@@ -112,13 +116,15 @@ export default function ExtractWisdomFixed() {
       });
 
       // Use the correct command format: -p for pattern
-      const command = `echo ${JSON.stringify(processedContent)} | "${fabricPath}" -p extract_wisdom`;
-      
-      const { stdout, stderr } = await execAsync(command, { 
+      const command = `echo ${JSON.stringify(
+        processedContent,
+      )} | "${fabricPath}" -p extract_wisdom`;
+
+      const { stdout, stderr } = await execAsync(command, {
         timeout,
         maxBuffer: 1024 * 1024,
-        encoding: 'utf8',
-        env: { ...process.env, PATH: process.env.PATH }
+        encoding: "utf8",
+        env: { ...process.env, PATH: process.env.PATH },
       });
 
       if (stderr && !stdout) {
@@ -127,7 +133,9 @@ export default function ExtractWisdomFixed() {
 
       const wisdom = stdout.trim();
       if (!wisdom) {
-        throw new Error("No wisdom extracted. The content might be too short or the pattern might not be available.");
+        throw new Error(
+          "No wisdom extracted. The content might be too short or the pattern might not be available.",
+        );
       }
 
       const extraction: ExtractedWisdom = {
@@ -143,7 +151,6 @@ export default function ExtractWisdomFixed() {
         title: "Success",
         message: "Wisdom extracted successfully!",
       });
-
     } catch (error: any) {
       const errorMessage = error.message || "Unknown error";
       setError(errorMessage);
@@ -280,7 +287,9 @@ ${extractedWisdom.content}
       {searchText.trim() && (
         <List.Item
           title="Extract Wisdom"
-          subtitle={`Ready to extract from: ${searchText.substring(0, 100)}${searchText.length > 100 ? "..." : ""}`}
+          subtitle={`Ready to extract from: ${searchText.substring(0, 100)}${
+            searchText.length > 100 ? "..." : ""
+          }`}
           icon={{ source: Icon.Stars, tintColor: "blue" }}
           actions={
             <ActionPanel>

@@ -8,24 +8,28 @@
   "license": "MIT",
   "commands": [
     {
-      "name": "extract-wisdom-ultimate",
-      "title": "Extract Wisdom",
-      "description": "Extract wisdom from text, URLs, or YouTube videos using Fabric AI with CSV export and debug logging",
+      "name": "analyze-wireframe-flow",
+      "title": "Analyze Wireframe Flow",
+      "description": "Analyze landing page UX, user flow, navigation, and conversion optimization",
       "mode": "view"
     },
     {
-      "name": "extract-wisdom-from-selection-working",
-      "title": "Extract Wisdom from Selection",
-      "description": "Extract wisdom from selected text - Quick access version",
-      "mode": "no-view",
-      "arguments": [
-        {
-          "name": "text",
-          "placeholder": "Selected text",
-          "type": "text",
-          "required": false
-        }
-      ]
+      "name": "analyze-copywriting-score",
+      "title": "Analyze Copywriting Score",
+      "description": "Analyze copywriting effectiveness with persuasion scoring and improvement suggestions",
+      "mode": "view"
+    },
+    {
+      "name": "create-storybrand-variant",
+      "title": "Create StoryBrand Variant",
+      "description": "Apply StoryBrand SB7 framework to landing page content for conversion optimization",
+      "mode": "view"
+    },
+    {
+      "name": "create-competitive-audit",
+      "title": "Create Competitive Audit",
+      "description": "Perform SWOT analysis and competitive intelligence on landing pages",
+      "mode": "view"
     }
   ],
   "preferences": [

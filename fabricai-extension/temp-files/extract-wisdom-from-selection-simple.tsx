@@ -1,4 +1,10 @@
-import { showHUD, Clipboard, getSelectedText, showToast, Toast } from "@raycast/api";
+import {
+  showHUD,
+  Clipboard,
+  getSelectedText,
+  showToast,
+  Toast,
+} from "@raycast/api";
 import { exec } from "child_process";
 import { promisify } from "util";
 
@@ -8,11 +14,13 @@ interface Arguments {
   text?: string;
 }
 
-export default async function ExtractWisdomFromSelectionSimple(props: { arguments: Arguments }) {
+export default async function ExtractWisdomFromSelectionSimple(props: {
+  arguments: Arguments;
+}) {
   try {
     // Get text from selection or argument
     let text = props.arguments.text;
-    
+
     if (!text) {
       try {
         text = await getSelectedText();
@@ -43,7 +51,9 @@ export default async function ExtractWisdomFromSelectionSimple(props: { argument
     }
 
     // Execute Fabric AI
-    const command = `echo ${JSON.stringify(text)} | fabric --pattern extract_wisdom`;
+    const command = `echo ${JSON.stringify(
+      text,
+    )} | fabric --pattern extract_wisdom`;
     const { stdout } = await execAsync(command, { timeout: 30000 });
 
     if (!stdout.trim()) {
@@ -54,11 +64,10 @@ export default async function ExtractWisdomFromSelectionSimple(props: { argument
     // Copy wisdom to clipboard
     await Clipboard.copy(stdout.trim());
     await showHUD("✅ Wisdom extracted and copied to clipboard!");
-
   } catch (error: any) {
     console.error("Error extracting wisdom:", error);
     const errorMessage = error.message || "Unknown error occurred";
-    
+
     if (errorMessage.includes("timeout")) {
       await showHUD("❌ Request timed out. Try with shorter content.");
     } else if (errorMessage.includes("fabric")) {

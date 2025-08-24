@@ -25,21 +25,25 @@ interface ExtractedWisdom {
   content: string;
   wisdom: string;
   timestamp: Date;
-  contentType: 'text' | 'url' | 'clipboard';
+  contentType: "text" | "url" | "clipboard";
   originalInput: string;
 }
 
 export default function ExtractWisdomEnhanced() {
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [extractedWisdom, setExtractedWisdom] = useState<ExtractedWisdom | null>(null);
+  const [extractedWisdom, setExtractedWisdom] =
+    useState<ExtractedWisdom | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [clipboardPreview, setClipboardPreview] = useState<string>("");
 
   const preferences = getPreferenceValues<Preferences>();
 
   const getFabricPath = () => {
-    return preferences.fabricInstallPath || "/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric";
+    return (
+      preferences.fabricInstallPath ||
+      "/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric"
+    );
   };
 
   const isUrl = (text: string): boolean => {
@@ -55,11 +59,12 @@ export default function ExtractWisdomEnhanced() {
     try {
       const clipboardText = await Clipboard.readText();
       if (clipboardText) {
-        const preview = clipboardText.length > 200 
-          ? clipboardText.substring(0, 200) + "..."
-          : clipboardText;
+        const preview =
+          clipboardText.length > 200
+            ? clipboardText.substring(0, 200) + "..."
+            : clipboardText;
         setClipboardPreview(preview);
-        
+
         await showToast({
           style: Toast.Style.Success,
           title: "Clipboard Loaded",
@@ -82,7 +87,10 @@ export default function ExtractWisdomEnhanced() {
     }
   };
 
-  const extractWisdom = async (content: string, contentType: 'text' | 'url' | 'clipboard' = 'text') => {
+  const extractWisdom = async (
+    content: string,
+    contentType: "text" | "url" | "clipboard" = "text",
+  ) => {
     if (!content.trim()) {
       await showToast({
         style: Toast.Style.Failure,
@@ -106,16 +114,17 @@ export default function ExtractWisdomEnhanced() {
       // Handle different content types
       if (isUrl(content)) {
         toastMessage = "Processing URL with Fabric AI...";
-        contentType = 'url';
-        
+        contentType = "url";
+
         // For URLs, we'll let Fabric AI handle the URL directly
         // Fabric AI has built-in URL processing capabilities
         processedContent = content;
       } else {
         // For text content, apply length limits
-        processedContent = content.length > maxLength 
-          ? content.substring(0, maxLength) + "..."
-          : content;
+        processedContent =
+          content.length > maxLength
+            ? content.substring(0, maxLength) + "..."
+            : content;
       }
 
       await showToast({
@@ -126,21 +135,25 @@ export default function ExtractWisdomEnhanced() {
 
       // Use different Fabric AI approaches based on content type
       let command: string;
-      
-      if (contentType === 'url') {
+
+      if (contentType === "url") {
         // For URLs, pass the URL directly to Fabric AI
         // Fabric AI can handle URL processing if configured with web scraping
-        command = `echo ${JSON.stringify(processedContent)} | "${fabricPath}" -p extract_wisdom`;
+        command = `echo ${JSON.stringify(
+          processedContent,
+        )} | "${fabricPath}" -p extract_wisdom`;
       } else {
         // For text content, use standard processing
-        command = `echo ${JSON.stringify(processedContent)} | "${fabricPath}" -p extract_wisdom`;
+        command = `echo ${JSON.stringify(
+          processedContent,
+        )} | "${fabricPath}" -p extract_wisdom`;
       }
-      
-      const { stdout, stderr } = await execAsync(command, { 
+
+      const { stdout, stderr } = await execAsync(command, {
         timeout,
         maxBuffer: 2 * 1024 * 1024, // 2MB buffer for large content
-        encoding: 'utf8',
-        env: { ...process.env, PATH: process.env.PATH }
+        encoding: "utf8",
+        env: { ...process.env, PATH: process.env.PATH },
       });
 
       if (stderr && !stdout) {
@@ -149,7 +162,9 @@ export default function ExtractWisdomEnhanced() {
 
       const wisdom = stdout.trim();
       if (!wisdom) {
-        throw new Error("No wisdom extracted. The content might be too short, the URL might be inaccessible, or the pattern might not be available.");
+        throw new Error(
+          "No wisdom extracted. The content might be too short, the URL might be inaccessible, or the pattern might not be available.",
+        );
       }
 
       const extraction: ExtractedWisdom = {
@@ -167,7 +182,6 @@ export default function ExtractWisdomEnhanced() {
         title: "Success",
         message: `Wisdom extracted from ${contentType}!`,
       });
-
     } catch (error: any) {
       const errorMessage = error.message || "Unknown error";
       setError(errorMessage);
@@ -175,7 +189,8 @@ export default function ExtractWisdomEnhanced() {
       // Provide specific guidance based on content type
       let helpMessage = errorMessage;
       if (isUrl(content)) {
-        helpMessage = "URL processing failed. Make sure Fabric AI is configured for web scraping, or try copying the webpage text instead.";
+        helpMessage =
+          "URL processing failed. Make sure Fabric AI is configured for web scraping, or try copying the webpage text instead.";
       }
 
       await showToast({
@@ -201,8 +216,8 @@ export default function ExtractWisdomEnhanced() {
       }
 
       // Determine if clipboard content is a URL
-      const contentType = isUrl(clipboardText.trim()) ? 'url' : 'clipboard';
-      
+      const contentType = isUrl(clipboardText.trim()) ? "url" : "clipboard";
+
       setSearchText(clipboardText);
       await extractWisdom(clipboardText, contentType);
     } catch (error: any) {
@@ -217,26 +232,34 @@ export default function ExtractWisdomEnhanced() {
   // Show extracted wisdom
   if (extractedWisdom) {
     const contentTypeEmoji = {
-      'text': '📝',
-      'url': '🔗',
-      'clipboard': '📋'
+      text: "📝",
+      url: "🔗",
+      clipboard: "📋",
     };
 
     return (
       <Detail
-        markdown={`# Extracted Wisdom ${contentTypeEmoji[extractedWisdom.contentType]}
+        markdown={`# Extracted Wisdom ${
+          contentTypeEmoji[extractedWisdom.contentType]
+        }
 
 ${extractedWisdom.wisdom}
 
 ---
 
 ## Original Content
-${extractedWisdom.contentType === 'url' ? `**URL:** ${extractedWisdom.originalInput}` : ''}
+${
+  extractedWisdom.contentType === "url"
+    ? `**URL:** ${extractedWisdom.originalInput}`
+    : ""
+}
 
 ${extractedWisdom.content}
 
 ---
-*Extracted from ${extractedWisdom.contentType} at ${extractedWisdom.timestamp.toLocaleString()}*
+*Extracted from ${
+          extractedWisdom.contentType
+        } at ${extractedWisdom.timestamp.toLocaleString()}*
 `}
         actions={
           <ActionPanel>
@@ -324,11 +347,15 @@ ${extractedWisdom.content}
 
       {searchText.trim() && (
         <List.Item
-          title={isUrl(searchText) ? "Extract Wisdom from URL" : "Extract Wisdom"}
-          subtitle={`Ready to extract from: ${searchText.substring(0, 100)}${searchText.length > 100 ? "..." : ""}`}
-          icon={{ 
-            source: isUrl(searchText) ? Icon.Globe : Icon.Stars, 
-            tintColor: isUrl(searchText) ? "orange" : "blue" 
+          title={
+            isUrl(searchText) ? "Extract Wisdom from URL" : "Extract Wisdom"
+          }
+          subtitle={`Ready to extract from: ${searchText.substring(0, 100)}${
+            searchText.length > 100 ? "..." : ""
+          }`}
+          icon={{
+            source: isUrl(searchText) ? Icon.Globe : Icon.Stars,
+            tintColor: isUrl(searchText) ? "orange" : "blue",
           }}
           actions={
             <ActionPanel>
@@ -352,7 +379,11 @@ ${extractedWisdom.content}
 
       <List.Item
         title="Extract from Clipboard"
-        subtitle={clipboardPreview ? `Preview: ${clipboardPreview}` : "Use content from your clipboard"}
+        subtitle={
+          clipboardPreview
+            ? `Preview: ${clipboardPreview}`
+            : "Use content from your clipboard"
+        }
         icon={{ source: Icon.Clipboard, tintColor: "green" }}
         actions={
           <ActionPanel>

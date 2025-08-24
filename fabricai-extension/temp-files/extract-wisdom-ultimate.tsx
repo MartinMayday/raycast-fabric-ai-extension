@@ -30,7 +30,7 @@ interface ExtractedWisdom {
   content: string;
   wisdom: string;
   timestamp: Date;
-  contentType: 'text' | 'youtube' | 'url' | 'clipboard';
+  contentType: "text" | "youtube" | "url" | "clipboard";
   originalInput: string;
   youtubeChannel?: string;
   author?: string;
@@ -50,7 +50,8 @@ interface ExtractedWisdom {
 export default function ExtractWisdomUltimate() {
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [extractedWisdom, setExtractedWisdom] = useState<ExtractedWisdom | null>(null);
+  const [extractedWisdom, setExtractedWisdom] =
+    useState<ExtractedWisdom | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
 
@@ -58,94 +59,109 @@ export default function ExtractWisdomUltimate() {
 
   // Initialize debug logs when component loads
   React.useEffect(() => {
-    addDebugLog('Extract Wisdom extension initialized');
-    addDebugLog(`Fabric path: ${preferences.fabricInstallPath || 'default'}`);
-    addDebugLog(`Max content length: ${preferences.maxContentLength || '2000'}`);
-    addDebugLog(`Timeout: ${preferences.timeoutSeconds || '60'} seconds`);
-    addDebugLog(`Export path: ${preferences.exportPath || 'default'}`);
+    addDebugLog("Extract Wisdom extension initialized");
+    addDebugLog(`Fabric path: ${preferences.fabricInstallPath || "default"}`);
+    addDebugLog(
+      `Max content length: ${preferences.maxContentLength || "2000"}`,
+    );
+    addDebugLog(`Timeout: ${preferences.timeoutSeconds || "60"} seconds`);
+    addDebugLog(`Export path: ${preferences.exportPath || "default"}`);
   }, []);
 
   const addDebugLog = (message: string) => {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] ${message}`;
-    setDebugLogs(prev => [...prev, logEntry]);
-    
+    setDebugLogs((prev) => [...prev, logEntry]);
+
     // Write to Raycast logs directory
     try {
       const logsDir = join(environment.supportPath, "logs");
       if (!existsSync(logsDir)) {
         mkdirSync(logsDir, { recursive: true });
       }
-      
+
       const logFile = join(logsDir, "fabric-extraction.log");
       appendFileSync(logFile, logEntry + "\n");
     } catch (error) {
       console.warn("Failed to write to log file:", error);
     }
-    
+
     console.log(logEntry);
   };
 
   const getFabricPath = () => {
-    return preferences.fabricInstallPath || "/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric";
+    return (
+      preferences.fabricInstallPath ||
+      "/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai/fabric"
+    );
   };
 
   const isYouTubeUrl = (text: string): boolean => {
-    const youtubeRegex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/;
+    const youtubeRegex =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/|youtube\.com\/v\/|youtube\.com\/shorts\/)([a-zA-Z0-9_-]{11})/;
     return youtubeRegex.test(text);
   };
 
-  const extractYouTubeContent = async (url: string): Promise<{ title: string; channel?: string }> => {
+  const extractYouTubeContent = async (
+    url: string,
+  ): Promise<{ title: string; channel?: string }> => {
     try {
       const ytDlpPath = "/opt/homebrew/bin/yt-dlp";
       addDebugLog(`Extracting YouTube content from: ${url}`);
-      
+
       // Get both title and channel
-      const { stdout: title } = await execAsync(`"${ytDlpPath}" --get-title "${url}"`, {
-        timeout: 15000,
-        maxBuffer: 1024 * 1024,
-        env: { 
-          ...process.env, 
-          PATH: `${process.env.PATH}:/opt/homebrew/bin:/usr/local/bin`
-        }
-      });
+      const { stdout: title } = await execAsync(
+        `"${ytDlpPath}" --get-title "${url}"`,
+        {
+          timeout: 15000,
+          maxBuffer: 1024 * 1024,
+          env: {
+            ...process.env,
+            PATH: `${process.env.PATH}:/opt/homebrew/bin:/usr/local/bin`,
+          },
+        },
+      );
 
       let channel = "";
       try {
-        const { stdout: channelName } = await execAsync(`"${ytDlpPath}" --print "%(uploader)s" "${url}"`, {
-          timeout: 10000,
-          maxBuffer: 1024 * 1024,
-          env: { 
-            ...process.env, 
-            PATH: `${process.env.PATH}:/opt/homebrew/bin:/usr/local/bin`
-          }
-        });
+        const { stdout: channelName } = await execAsync(
+          `"${ytDlpPath}" --print "%(uploader)s" "${url}"`,
+          {
+            timeout: 10000,
+            maxBuffer: 1024 * 1024,
+            env: {
+              ...process.env,
+              PATH: `${process.env.PATH}:/opt/homebrew/bin:/usr/local/bin`,
+            },
+          },
+        );
         channel = channelName.trim();
         addDebugLog(`YouTube channel extracted: ${channel}`);
       } catch {
         addDebugLog("Channel extraction failed, continuing without it");
       }
-      
+
       if (title && title.trim()) {
         addDebugLog(`YouTube title extracted: ${title.trim()}`);
         return {
           title: title.trim(),
-          channel: channel || undefined
+          channel: channel || undefined,
         };
       }
-      
+
       throw new Error("Could not extract YouTube title");
-      
     } catch (error: any) {
       addDebugLog(`YouTube extraction error: ${error.message}`);
-      const videoIdMatch = url.match(/(?:v=|\/embed\/|\/v\/|youtu\.be\/|\/shorts\/)([a-zA-Z0-9_-]{11})/);
+      const videoIdMatch = url.match(
+        /(?:v=|\/embed\/|\/v\/|youtu\.be\/|\/shorts\/)([a-zA-Z0-9_-]{11})/,
+      );
       if (videoIdMatch) {
         return {
           title: `YouTube Video ID: ${videoIdMatch[1]}`,
-          channel: undefined
+          channel: undefined,
         };
       }
-      
+
       throw new Error(`YouTube extraction failed: ${error.message}`);
     }
   };
@@ -155,27 +171,27 @@ export default function ExtractWisdomUltimate() {
       const fabricPath = getFabricPath();
       addDebugLog(`Running fabric command with path: ${fabricPath}`);
       addDebugLog(`Input length: ${input.length} characters`);
-      
-      const fabricProcess = spawn(fabricPath, ['--pattern', 'extract_wisdom'], {
-        stdio: ['pipe', 'pipe', 'pipe'],
+
+      const fabricProcess = spawn(fabricPath, ["--pattern", "extract_wisdom"], {
+        stdio: ["pipe", "pipe", "pipe"],
         env: {
           ...process.env,
-          PATH: `${process.env.PATH}:/opt/homebrew/bin:/usr/local/bin:/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai`
-        }
+          PATH: `${process.env.PATH}:/opt/homebrew/bin:/usr/local/bin:/Volumes/askuss/cloudworkspace/.creatorworkspace/.add-ons/fabric-ai`,
+        },
       });
 
-      let stdout = '';
-      let stderr = '';
+      let stdout = "";
+      let stderr = "";
 
-      fabricProcess.stdout.on('data', (data) => {
+      fabricProcess.stdout.on("data", (data) => {
         stdout += data.toString();
       });
 
-      fabricProcess.stderr.on('data', (data) => {
+      fabricProcess.stderr.on("data", (data) => {
         stderr += data.toString();
       });
 
-      fabricProcess.on('close', (code) => {
+      fabricProcess.on("close", (code) => {
         addDebugLog(`Fabric process closed with code: ${code}`);
         if (code === 0 && stdout.trim()) {
           addDebugLog(`Fabric output length: ${stdout.length} characters`);
@@ -186,7 +202,7 @@ export default function ExtractWisdomUltimate() {
         }
       });
 
-      fabricProcess.on('error', (error) => {
+      fabricProcess.on("error", (error) => {
         addDebugLog(`Fabric process error: ${error.message}`);
         reject(error);
       });
@@ -196,51 +212,77 @@ export default function ExtractWisdomUltimate() {
 
       setTimeout(() => {
         fabricProcess.kill();
-        addDebugLog('Fabric command timed out');
-        reject(new Error('Fabric command timed out'));
+        addDebugLog("Fabric command timed out");
+        reject(new Error("Fabric command timed out"));
       }, 60000);
     });
   };
 
-  const parseWisdomOutput = (wisdom: string, originalInput: string, contentType: string, youtubeData?: { title: string; channel?: string }): ExtractedWisdom => {
-    addDebugLog('Parsing wisdom output into structured data');
-    
+  const parseWisdomOutput = (
+    wisdom: string,
+    originalInput: string,
+    contentType: string,
+    youtubeData?: { title: string; channel?: string },
+  ): ExtractedWisdom => {
+    addDebugLog("Parsing wisdom output into structured data");
+
     // Parse the structured output from fabric
-    const sections = wisdom.split('\n# ');
+    const sections = wisdom.split("\n# ");
     const parsed: any = {};
 
-    sections.forEach(section => {
-      const lines = section.split('\n');
-      const title = lines[0].replace('#', '').trim().toLowerCase();
-      const content = lines.slice(1).join('\n').trim();
+    sections.forEach((section) => {
+      const lines = section.split("\n");
+      const title = lines[0].replace("#", "").trim().toLowerCase();
+      const content = lines.slice(1).join("\n").trim();
 
       switch (title) {
-        case 'summary':
+        case "summary":
           parsed.summary = content;
           break;
-        case 'ideas':
-          parsed.ideas = content.split('\n').filter(line => line.startsWith('-')).map(line => line.substring(1).trim());
+        case "ideas":
+          parsed.ideas = content
+            .split("\n")
+            .filter((line) => line.startsWith("-"))
+            .map((line) => line.substring(1).trim());
           break;
-        case 'insights':
-          parsed.insights = content.split('\n').filter(line => line.startsWith('-')).map(line => line.substring(1).trim());
+        case "insights":
+          parsed.insights = content
+            .split("\n")
+            .filter((line) => line.startsWith("-"))
+            .map((line) => line.substring(1).trim());
           break;
-        case 'quotes':
-          parsed.quotes = content.split('\n').filter(line => line.startsWith('-')).map(line => line.substring(1).trim());
+        case "quotes":
+          parsed.quotes = content
+            .split("\n")
+            .filter((line) => line.startsWith("-"))
+            .map((line) => line.substring(1).trim());
           break;
-        case 'habits':
-          parsed.habits = content.split('\n').filter(line => line.startsWith('-')).map(line => line.substring(1).trim());
+        case "habits":
+          parsed.habits = content
+            .split("\n")
+            .filter((line) => line.startsWith("-"))
+            .map((line) => line.substring(1).trim());
           break;
-        case 'facts':
-          parsed.facts = content.split('\n').filter(line => line.startsWith('-')).map(line => line.substring(1).trim());
+        case "facts":
+          parsed.facts = content
+            .split("\n")
+            .filter((line) => line.startsWith("-"))
+            .map((line) => line.substring(1).trim());
           break;
-        case 'references':
-          parsed.references = content.split('\n').filter(line => line.startsWith('-')).map(line => line.substring(1).trim());
+        case "references":
+          parsed.references = content
+            .split("\n")
+            .filter((line) => line.startsWith("-"))
+            .map((line) => line.substring(1).trim());
           break;
-        case 'one-sentence takeaway':
+        case "one-sentence takeaway":
           parsed.takeaway = content;
           break;
-        case 'recommendations':
-          parsed.recommendations = content.split('\n').filter(line => line.startsWith('-')).map(line => line.substring(1).trim());
+        case "recommendations":
+          parsed.recommendations = content
+            .split("\n")
+            .filter((line) => line.startsWith("-"))
+            .map((line) => line.substring(1).trim());
           break;
       }
     });
@@ -256,16 +298,16 @@ export default function ExtractWisdomUltimate() {
       contentType: contentType as any,
       originalInput,
       youtubeChannel: youtubeData?.channel,
-      author: youtubeData?.channel || 'Unknown',
-      hook: parsed.quotes?.[0] || parsed.ideas?.[0] || '',
-      summary: parsed.summary || '',
+      author: youtubeData?.channel || "Unknown",
+      hook: parsed.quotes?.[0] || parsed.ideas?.[0] || "",
+      summary: parsed.summary || "",
       ideas: parsed.ideas || [],
       insights: parsed.insights || [],
       quotes: parsed.quotes || [],
       habits: parsed.habits || [],
       facts: parsed.facts || [],
       references: parsed.references || [],
-      takeaway: parsed.takeaway || '',
+      takeaway: parsed.takeaway || "",
       recommendations: parsed.recommendations || [],
       ctaUrls: ctaUrls,
     };
@@ -273,9 +315,10 @@ export default function ExtractWisdomUltimate() {
 
   const exportToSpreadsheet = async (data: ExtractedWisdom) => {
     try {
-      addDebugLog('Starting CSV export');
-      const exportPath = preferences.exportPath || join(environment.supportPath, "exports");
-      
+      addDebugLog("Starting CSV export");
+      const exportPath =
+        preferences.exportPath || join(environment.supportPath, "exports");
+
       if (!existsSync(exportPath)) {
         mkdirSync(exportPath, { recursive: true });
         addDebugLog(`Created export directory: ${exportPath}`);
@@ -283,44 +326,60 @@ export default function ExtractWisdomUltimate() {
 
       // Create CSV content
       const csvHeaders = [
-        'Date', 'Author', 'Hook', 'Source Type', 'Pattern Type', 'Extracted Content Full',
-        'Summary', 'Ideas', 'Insights', 'Notable Quotes', 'Habits', 'Facts', 'References',
-        'One-Sentence Takeaway', 'Recommendations', 'YouTube Channel', 'CTA URLs', 'Connect with Hosts',
-        'Pattern Suggest Next', 'Original URL'
+        "Date",
+        "Author",
+        "Hook",
+        "Source Type",
+        "Pattern Type",
+        "Extracted Content Full",
+        "Summary",
+        "Ideas",
+        "Insights",
+        "Notable Quotes",
+        "Habits",
+        "Facts",
+        "References",
+        "One-Sentence Takeaway",
+        "Recommendations",
+        "YouTube Channel",
+        "CTA URLs",
+        "Connect with Hosts",
+        "Pattern Suggest Next",
+        "Original URL",
       ];
 
       const csvRow = [
         data.timestamp.toISOString(),
-        data.author || '',
-        data.hook || '',
+        data.author || "",
+        data.hook || "",
         data.contentType,
-        'extract_wisdom',
+        "extract_wisdom",
         `"${data.wisdom.replace(/"/g, '""')}"`,
-        `"${data.summary?.replace(/"/g, '""') || ''}"`,
-        `"${data.ideas?.join('; ').replace(/"/g, '""') || ''}"`,
-        `"${data.insights?.join('; ').replace(/"/g, '""') || ''}"`,
-        `"${data.quotes?.join('; ').replace(/"/g, '""') || ''}"`,
-        `"${data.habits?.join('; ').replace(/"/g, '""') || ''}"`,
-        `"${data.facts?.join('; ').replace(/"/g, '""') || ''}"`,
-        `"${data.references?.join('; ').replace(/"/g, '""') || ''}"`,
-        `"${data.takeaway?.replace(/"/g, '""') || ''}"`,
-        `"${data.recommendations?.join('; ').replace(/"/g, '""') || ''}"`,
-        data.youtubeChannel || '',
-        `"${data.ctaUrls?.join('; ') || ''}"`,
-        data.youtubeChannel || '',
-        'summarize, create_art, write_essay',
-        data.originalInput
+        `"${data.summary?.replace(/"/g, '""') || ""}"`,
+        `"${data.ideas?.join("; ").replace(/"/g, '""') || ""}"`,
+        `"${data.insights?.join("; ").replace(/"/g, '""') || ""}"`,
+        `"${data.quotes?.join("; ").replace(/"/g, '""') || ""}"`,
+        `"${data.habits?.join("; ").replace(/"/g, '""') || ""}"`,
+        `"${data.facts?.join("; ").replace(/"/g, '""') || ""}"`,
+        `"${data.references?.join("; ").replace(/"/g, '""') || ""}"`,
+        `"${data.takeaway?.replace(/"/g, '""') || ""}"`,
+        `"${data.recommendations?.join("; ").replace(/"/g, '""') || ""}"`,
+        data.youtubeChannel || "",
+        `"${data.ctaUrls?.join("; ") || ""}"`,
+        data.youtubeChannel || "",
+        "summarize, create_art, write_essay",
+        data.originalInput,
       ];
 
       const csvFile = join(exportPath, "fabric-extractions.csv");
       const isNewFile = !existsSync(csvFile);
 
       if (isNewFile) {
-        writeFileSync(csvFile, csvHeaders.join(',') + '\n');
-        addDebugLog('Created new CSV file with headers');
+        writeFileSync(csvFile, csvHeaders.join(",") + "\n");
+        addDebugLog("Created new CSV file with headers");
       }
 
-      appendFileSync(csvFile, csvRow.join(',') + '\n');
+      appendFileSync(csvFile, csvRow.join(",") + "\n");
       addDebugLog(`Exported data to CSV: ${csvFile}`);
 
       await showToast({
@@ -328,7 +387,6 @@ export default function ExtractWisdomUltimate() {
         title: "Exported to CSV",
         message: `Saved to: ${csvFile}`,
       });
-
     } catch (error: any) {
       addDebugLog(`Export failed: ${error.message}`);
       await showToast({
@@ -339,7 +397,10 @@ export default function ExtractWisdomUltimate() {
     }
   };
 
-  const extractWisdom = async (content: string, contentType: 'text' | 'youtube' | 'url' | 'clipboard' = 'text') => {
+  const extractWisdom = async (
+    content: string,
+    contentType: "text" | "youtube" | "url" | "clipboard" = "text",
+  ) => {
     if (!content.trim()) {
       await showToast({
         style: Toast.Style.Failure,
@@ -359,8 +420,8 @@ export default function ExtractWisdomUltimate() {
       let youtubeData: { title: string; channel?: string } | undefined;
 
       if (isYouTubeUrl(content)) {
-        contentType = 'youtube';
-        
+        contentType = "youtube";
+
         await showToast({
           style: Toast.Style.Animated,
           title: "Extracting",
@@ -378,9 +439,10 @@ export default function ExtractWisdomUltimate() {
         }
       } else {
         const maxLength = parseInt(preferences.maxContentLength || "2000");
-        textToProcess = content.length > maxLength 
-          ? content.substring(0, maxLength) + "..."
-          : content;
+        textToProcess =
+          content.length > maxLength
+            ? content.substring(0, maxLength) + "..."
+            : content;
         processedContent = textToProcess;
       }
 
@@ -396,7 +458,12 @@ export default function ExtractWisdomUltimate() {
         throw new Error("No wisdom extracted from Fabric AI");
       }
 
-      const extraction = parseWisdomOutput(wisdom, content, contentType, youtubeData);
+      const extraction = parseWisdomOutput(
+        wisdom,
+        content,
+        contentType,
+        youtubeData,
+      );
       setExtractedWisdom(extraction);
 
       await showToast({
@@ -406,7 +473,6 @@ export default function ExtractWisdomUltimate() {
       });
 
       addDebugLog(`Extraction completed successfully for ${contentType}`);
-
     } catch (error: any) {
       const errorMessage = error.message || "Unknown error";
       setError(errorMessage);
@@ -433,9 +499,11 @@ export default function ExtractWisdomUltimate() {
         });
         return;
       }
-      
-      addDebugLog(`Extracting from clipboard: ${clipboardText.substring(0, 100)}...`);
-      await extractWisdom(clipboardText, 'clipboard');
+
+      addDebugLog(
+        `Extracting from clipboard: ${clipboardText.substring(0, 100)}...`,
+      );
+      await extractWisdom(clipboardText, "clipboard");
     } catch (error: any) {
       await showToast({
         style: Toast.Style.Failure,
@@ -447,9 +515,9 @@ export default function ExtractWisdomUltimate() {
 
   const sendDebugLogs = async () => {
     try {
-      addDebugLog('User requested debug logs copy');
-      const logsContent = debugLogs.join('\n');
-      
+      addDebugLog("User requested debug logs copy");
+      const logsContent = debugLogs.join("\n");
+
       if (debugLogs.length === 0) {
         await showToast({
           style: Toast.Style.Failure,
@@ -458,16 +526,18 @@ export default function ExtractWisdomUltimate() {
         });
         return;
       }
-      
+
       await Clipboard.copy(logsContent);
-      
+
       await showToast({
         style: Toast.Style.Success,
         title: "Debug Logs Copied",
         message: `${debugLogs.length} log entries copied to clipboard`,
       });
-      
-      addDebugLog(`Successfully copied ${debugLogs.length} log entries to clipboard`);
+
+      addDebugLog(
+        `Successfully copied ${debugLogs.length} log entries to clipboard`,
+      );
     } catch (error: any) {
       addDebugLog(`Failed to copy logs: ${error.message}`);
       await showToast({
@@ -479,12 +549,12 @@ export default function ExtractWisdomUltimate() {
   };
 
   const testDebugSystem = async () => {
-    addDebugLog('Testing debug system functionality');
-    addDebugLog('Debug system test: Adding sample log entries');
+    addDebugLog("Testing debug system functionality");
+    addDebugLog("Debug system test: Adding sample log entries");
     addDebugLog(`Current time: ${new Date().toLocaleString()}`);
     addDebugLog(`Environment support path: ${environment.supportPath}`);
-    addDebugLog('Debug system test completed');
-    
+    addDebugLog("Debug system test completed");
+
     await showToast({
       style: Toast.Style.Success,
       title: "Debug Test Complete",
@@ -492,43 +562,48 @@ export default function ExtractWisdomUltimate() {
     });
   };
 
-  const parseWisdomSections = (wisdom: string): { title: string; content: string; icon: string }[] => {
+  const parseWisdomSections = (
+    wisdom: string,
+  ): { title: string; content: string; icon: string }[] => {
     const sections: { title: string; content: string; icon: string }[] = [];
-    const lines = wisdom.split('\n');
-    let currentSection = '';
+    const lines = wisdom.split("\n");
+    let currentSection = "";
     let currentContent: string[] = [];
-    
+
     // Icon mapping for different sections
     const iconMap: { [key: string]: string } = {
-      'summary': Icon.Text,
-      'ideas': Icon.Lightbulb,
-      'insights': Icon.Eye,
-      'quotes': Icon.QuoteBlock,
-      'habits': Icon.Repeat,
-      'facts': Icon.Info,
-      'references': Icon.Link,
-      'takeaway': Icon.Star,
-      'recommendations': Icon.CheckCircle,
-      'one-sentence': Icon.Star,
-      'conclusion': Icon.Checkmark,
-      'key points': Icon.BulletPoints,
-      'main points': Icon.BulletPoints,
-      'action items': Icon.CheckList,
-      'next steps': Icon.ArrowRight,
+      summary: Icon.Text,
+      ideas: Icon.Star,
+      insights: Icon.Eye,
+      quotes: Icon.Text,
+      habits: Icon.ArrowClockwise,
+      facts: Icon.Dot,
+      references: Icon.Link,
+      takeaway: Icon.Star,
+      recommendations: Icon.Circle,
+      "one-sentence": Icon.Star,
+      conclusion: Icon.Checkmark,
+      "key points": Icon.Dot,
+      "main points": Icon.Dot,
+      "action items": Icon.Checkmark,
+      "next steps": Icon.ArrowRight,
     };
-    
+
     for (const line of lines) {
-      if (line.startsWith('# ')) {
+      if (line.startsWith("# ")) {
         // Save previous section if it exists
         if (currentSection && currentContent.length > 0) {
-          const sectionKey = currentSection.toLowerCase().replace(/[^a-z\s]/g, '').trim();
+          const sectionKey = currentSection
+            .toLowerCase()
+            .replace(/[^a-z\s]/g, "")
+            .trim();
           sections.push({
             title: currentSection,
-            content: currentContent.join('\n').trim(),
-            icon: iconMap[sectionKey] || Icon.Document
+            content: currentContent.join("\n").trim(),
+            icon: iconMap[sectionKey] || Icon.Document,
           });
         }
-        
+
         // Start new section
         currentSection = line.substring(2).trim();
         currentContent = [];
@@ -536,17 +611,20 @@ export default function ExtractWisdomUltimate() {
         currentContent.push(line);
       }
     }
-    
+
     // Add the last section
     if (currentSection && currentContent.length > 0) {
-      const sectionKey = currentSection.toLowerCase().replace(/[^a-z\s]/g, '').trim();
+      const sectionKey = currentSection
+        .toLowerCase()
+        .replace(/[^a-z\s]/g, "")
+        .trim();
       sections.push({
         title: currentSection,
-        content: currentContent.join('\n').trim(),
-        icon: iconMap[sectionKey] || Icon.Document
+        content: currentContent.join("\n").trim(),
+        icon: iconMap[sectionKey] || Icon.Document,
       });
     }
-    
+
     return sections;
   };
 
@@ -571,7 +649,6 @@ export default function ExtractWisdomUltimate() {
       } else {
         throw new Error("No output from Fabric AI");
       }
-
     } catch (error: any) {
       await showToast({
         style: Toast.Style.Failure,
@@ -585,24 +662,30 @@ export default function ExtractWisdomUltimate() {
 
   if (extractedWisdom) {
     const wisdomSections = parseWisdomSections(extractedWisdom.wisdom);
-    
+
     return (
       <Detail
         markdown={`# Extracted Wisdom
 
 ## Source
-**Type:** ${extractedWisdom.contentType === 'youtube' ? '🎥 YouTube Video' : 
-                extractedWisdom.contentType === 'url' ? '🔗 URL' : 
-                extractedWisdom.contentType === 'clipboard' ? '📋 Clipboard' : '📝 Text'}
+**Type:** ${
+          extractedWisdom.contentType === "youtube"
+            ? "🎥 YouTube Video"
+            : extractedWisdom.contentType === "url"
+            ? "🔗 URL"
+            : extractedWisdom.contentType === "clipboard"
+            ? "📋 Clipboard"
+            : "📝 Text"
+        }
 **Original:** ${extractedWisdom.originalInput}
-**Channel:** ${extractedWisdom.youtubeChannel || 'N/A'}
+**Channel:** ${extractedWisdom.youtubeChannel || "N/A"}
 **Processed:** ${new Date(extractedWisdom.timestamp).toLocaleString()}
 
 ## Summary
-${extractedWisdom.summary || 'No summary available'}
+${extractedWisdom.summary || "No summary available"}
 
 ## Key Takeaway
-${extractedWisdom.takeaway || 'No takeaway available'}
+${extractedWisdom.takeaway || "No takeaway available"}
 
 ## Full Wisdom
 
@@ -630,7 +713,7 @@ ${extractedWisdom.wisdom}
                 });
               }}
             />
-            
+
             {/* Dynamic actions for each section */}
             {wisdomSections.map((section, index) => (
               <Action
@@ -647,7 +730,7 @@ ${extractedWisdom.wisdom}
                 }}
               />
             ))}
-            
+
             <Action
               title="Back to Input"
               icon={Icon.ArrowLeft}
@@ -673,7 +756,7 @@ ${extractedWisdom.wisdom}
           <ActionPanel>
             <Action
               title="Run Test"
-              icon={Icon.Bug}
+              icon={Icon.ExclamationMark}
               onAction={testFabricConnection}
             />
           </ActionPanel>
@@ -682,20 +765,26 @@ ${extractedWisdom.wisdom}
 
       {searchText && (
         <List.Item
-          title={isYouTubeUrl(searchText) ? "🎥 Extract Wisdom from YouTube Video" : "📝 Extract Wisdom from Text"}
-          subtitle={`Ready to extract from: ${searchText.substring(0, 50)}${searchText.length > 50 ? '...' : ''}`}
+          title={
+            isYouTubeUrl(searchText)
+              ? "🎥 Extract Wisdom from YouTube Video"
+              : "📝 Extract Wisdom from Text"
+          }
+          subtitle={`Ready to extract from: ${searchText.substring(0, 50)}${
+            searchText.length > 50 ? "..." : ""
+          }`}
           actions={
             <ActionPanel>
               <Action
                 title="Extract Wisdom"
-                icon={Icon.Wand}
+                icon={Icon.Star}
                 onAction={() => extractWisdom(searchText)}
               />
             </ActionPanel>
           }
         />
       )}
-      
+
       <List.Item
         title="📋 Extract from Clipboard"
         subtitle="Use content from your clipboard"
@@ -717,7 +806,7 @@ ${extractedWisdom.wisdom}
           <ActionPanel>
             <Action
               title="Copy Debug Logs"
-              icon={Icon.Bug}
+              icon={Icon.ExclamationMark}
               onAction={sendDebugLogs}
             />
             <Action

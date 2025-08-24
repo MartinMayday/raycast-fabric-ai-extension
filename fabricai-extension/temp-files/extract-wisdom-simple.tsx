@@ -39,10 +39,11 @@ const addDebugLog = async (message: string) => {
   try {
     const timestamp = new Date().toISOString();
     const logEntry = `[${timestamp}] ${message}`;
-    
-    const existingLogs = await LocalStorage.getItem<string>("debug_logs") || "";
+
+    const existingLogs =
+      (await LocalStorage.getItem<string>("debug_logs")) || "";
     const newLogs = existingLogs ? `${existingLogs}\n${logEntry}` : logEntry;
-    
+
     await LocalStorage.setItem("debug_logs", newLogs);
   } catch (error) {
     console.error("Failed to add debug log:", error);
@@ -52,7 +53,8 @@ const addDebugLog = async (message: string) => {
 export default function ExtractWisdomSimple() {
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [extractedWisdom, setExtractedWisdom] = useState<ExtractedWisdom | null>(null);
+  const [extractedWisdom, setExtractedWisdom] =
+    useState<ExtractedWisdom | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const preferences = getPreferenceValues<Preferences>();
@@ -67,64 +69,75 @@ export default function ExtractWisdomSimple() {
     }
   }, [preferences.fabricInstallPath]);
 
-  const extractWisdom = useCallback(async (content: string) => {
-    if (!content.trim()) {
-      setError("Please enter some content to extract wisdom from.");
-      return;
-    }
-
-    const maxLength = parseInt(preferences.maxContentLength || "50000");
-    if (content.length > maxLength) {
-      setError(`Content is too long. Maximum length is ${maxLength} characters.`);
-      return;
-    }
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      // Check if Fabric AI is installed
-      const isInstalled = await checkFabricInstallation();
-      if (!isInstalled) {
-        throw new Error("Fabric AI is not installed or not accessible. Please install Fabric AI first.");
+  const extractWisdom = useCallback(
+    async (content: string) => {
+      if (!content.trim()) {
+        setError("Please enter some content to extract wisdom from.");
+        return;
       }
 
-      // Execute Fabric AI
-      const fabricPath = preferences.fabricInstallPath || "fabric";
-      const timeout = parseInt(preferences.timeoutSeconds || "30") * 1000;
-      
-      const command = `echo ${JSON.stringify(content)} | ${fabricPath} --pattern extract_wisdom`;
-      const { stdout } = await execAsync(command, { timeout });
-
-      if (!stdout.trim()) {
-        throw new Error("No wisdom was extracted. Please try with different content.");
+      const maxLength = parseInt(preferences.maxContentLength || "50000");
+      if (content.length > maxLength) {
+        setError(
+          `Content is too long. Maximum length is ${maxLength} characters.`,
+        );
+        return;
       }
 
-      const extraction: ExtractedWisdom = {
-        id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
-        content,
-        wisdom: stdout.trim(),
-        timestamp: new Date(),
-      };
+      setIsLoading(true);
+      setError(null);
 
-      setExtractedWisdom(extraction);
-      showToast({
-        style: Toast.Style.Success,
-        title: "Wisdom Extracted",
-        message: "Successfully extracted wisdom from your content",
-      });
-    } catch (error: any) {
-      const errorMessage = error.message || "An unexpected error occurred";
-      setError(errorMessage);
-      showToast({
-        style: Toast.Style.Failure,
-        title: "Extraction Failed",
-        message: errorMessage,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [preferences, checkFabricInstallation]);
+      try {
+        // Check if Fabric AI is installed
+        const isInstalled = await checkFabricInstallation();
+        if (!isInstalled) {
+          throw new Error(
+            "Fabric AI is not installed or not accessible. Please install Fabric AI first.",
+          );
+        }
+
+        // Execute Fabric AI
+        const fabricPath = preferences.fabricInstallPath || "fabric";
+        const timeout = parseInt(preferences.timeoutSeconds || "30") * 1000;
+
+        const command = `echo ${JSON.stringify(
+          content,
+        )} | ${fabricPath} --pattern extract_wisdom`;
+        const { stdout } = await execAsync(command, { timeout });
+
+        if (!stdout.trim()) {
+          throw new Error(
+            "No wisdom was extracted. Please try with different content.",
+          );
+        }
+
+        const extraction: ExtractedWisdom = {
+          id: `${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          content,
+          wisdom: stdout.trim(),
+          timestamp: new Date(),
+        };
+
+        setExtractedWisdom(extraction);
+        showToast({
+          style: Toast.Style.Success,
+          title: "Wisdom Extracted",
+          message: "Successfully extracted wisdom from your content",
+        });
+      } catch (error: any) {
+        const errorMessage = error.message || "An unexpected error occurred";
+        setError(errorMessage);
+        showToast({
+          style: Toast.Style.Failure,
+          title: "Extraction Failed",
+          message: errorMessage,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [preferences, checkFabricInstallation],
+  );
 
   const handleExtractFromClipboard = useCallback(async () => {
     try {
@@ -149,7 +162,9 @@ ${extractedWisdom.wisdom}
 ---
 
 **Original Content Preview:**
-${extractedWisdom.content.substring(0, 200)}${extractedWisdom.content.length > 200 ? "..." : ""}
+${extractedWisdom.content.substring(0, 200)}${
+      extractedWisdom.content.length > 200 ? "..." : ""
+    }
 
 **Extracted:** ${extractedWisdom.timestamp.toLocaleString()}`;
 
@@ -210,7 +225,11 @@ ${extractedWisdom.content.substring(0, 200)}${extractedWisdom.content.length > 2
 
       <List.Item
         title="Extract Wisdom"
-        subtitle={searchText ? `Ready to extract from: ${searchText.substring(0, 50)}...` : "Enter content above"}
+        subtitle={
+          searchText
+            ? `Ready to extract from: ${searchText.substring(0, 50)}...`
+            : "Enter content above"
+        }
         icon={{ source: Icon.Star, tintColor: "blue" }}
         actions={
           <ActionPanel>

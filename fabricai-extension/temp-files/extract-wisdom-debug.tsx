@@ -31,7 +31,8 @@ interface ExtractedWisdom {
 export default function ExtractWisdomDebug() {
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [extractedWisdom, setExtractedWisdom] = useState<ExtractedWisdom | null>(null);
+  const [extractedWisdom, setExtractedWisdom] =
+    useState<ExtractedWisdom | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [debugInfo, setDebugInfo] = useState<string>("");
 
@@ -44,7 +45,7 @@ export default function ExtractWisdomDebug() {
 
     try {
       const fabricPath = preferences.fabricInstallPath || "fabric";
-      
+
       // Test 1: Check if fabric command exists
       setDebugInfo("Testing fabric installation...");
       await showToast({
@@ -53,13 +54,23 @@ export default function ExtractWisdomDebug() {
         message: "Checking Fabric AI installation...",
       });
 
-      const { stdout: versionOutput, stderr: versionError } = await execAsync(`${fabricPath} --version`, { timeout: 10000 });
-      
-      setDebugInfo(`✅ Fabric version check passed\nOutput: ${versionOutput}\nError: ${versionError || "none"}`);
+      const { stdout: versionOutput, stderr: versionError } = await execAsync(
+        `${fabricPath} --version`,
+        { timeout: 10000 },
+      );
+
+      setDebugInfo(
+        `✅ Fabric version check passed\nOutput: ${versionOutput}\nError: ${
+          versionError || "none"
+        }`,
+      );
 
       // Test 2: Check available patterns
-      const { stdout: patternsOutput, stderr: patternsError } = await execAsync(`${fabricPath} --list`, { timeout: 10000 });
-      
+      const { stdout: patternsOutput, stderr: patternsError } = await execAsync(
+        `${fabricPath} --list`,
+        { timeout: 10000 },
+      );
+
       const finalDebugInfo = `✅ Fabric installation test completed
       
 Version Check:
@@ -80,7 +91,6 @@ Fabric Path: ${fabricPath}
         title: "Success",
         message: "Fabric AI is working!",
       });
-
     } catch (error: any) {
       const errorInfo = `❌ Fabric installation test failed
       
@@ -128,9 +138,10 @@ Possible issues:
       const timeout = parseInt(preferences.timeoutSeconds || "30") * 1000;
 
       // Prepare content
-      const processedContent = content.length > maxLength 
-        ? content.substring(0, maxLength) + "..."
-        : content;
+      const processedContent =
+        content.length > maxLength
+          ? content.substring(0, maxLength) + "..."
+          : content;
 
       setDebugInfo(`🔄 Starting extraction...
 Content length: ${processedContent.length}
@@ -145,31 +156,40 @@ Timeout: ${timeout}ms`);
 
       // Simple test command first
       const testCommand = `echo "test" | ${fabricPath} --pattern extract_wisdom`;
-      
-      setDebugInfo(prev => prev + `\n\nTest command: ${testCommand}`);
 
-      const { stdout, stderr } = await execAsync(testCommand, { 
+      setDebugInfo((prev) => prev + `\n\nTest command: ${testCommand}`);
+
+      const { stdout, stderr } = await execAsync(testCommand, {
         timeout,
         maxBuffer: 1024 * 1024,
-        encoding: 'utf8'
+        encoding: "utf8",
       });
 
-      setDebugInfo(prev => prev + `\n\nTest result:
+      setDebugInfo(
+        (prev) =>
+          prev +
+          `\n\nTest result:
 stdout: ${stdout}
-stderr: ${stderr || "none"}`);
+stderr: ${stderr || "none"}`,
+      );
 
       if (!stdout && stderr) {
         throw new Error(`Fabric AI error: ${stderr}`);
       }
 
       // If test works, try with actual content
-      const actualCommand = `echo ${JSON.stringify(processedContent)} | ${fabricPath} --pattern extract_wisdom`;
-      
-      const { stdout: actualOutput, stderr: actualError } = await execAsync(actualCommand, { 
-        timeout,
-        maxBuffer: 1024 * 1024,
-        encoding: 'utf8'
-      });
+      const actualCommand = `echo ${JSON.stringify(
+        processedContent,
+      )} | ${fabricPath} --pattern extract_wisdom`;
+
+      const { stdout: actualOutput, stderr: actualError } = await execAsync(
+        actualCommand,
+        {
+          timeout,
+          maxBuffer: 1024 * 1024,
+          encoding: "utf8",
+        },
+      );
 
       const wisdom = actualOutput.trim() || "No wisdom extracted";
 
@@ -189,12 +209,11 @@ Error: ${actualError || "none"}`,
         title: "Success",
         message: "Wisdom extracted!",
       });
-
     } catch (error: any) {
       const errorMessage = error.message || "Unknown error";
       setError(errorMessage);
-      
-      setDebugInfo(prev => prev + `\n\n❌ Error occurred: ${errorMessage}`);
+
+      setDebugInfo((prev) => prev + `\n\n❌ Error occurred: ${errorMessage}`);
 
       await showToast({
         style: Toast.Style.Failure,
@@ -309,7 +328,9 @@ ${error ? `## Error\n${error}` : ""}
       {searchText.trim() && (
         <List.Item
           title="Extract Wisdom (Debug Mode)"
-          subtitle={`Ready to extract from: ${searchText.substring(0, 100)}${searchText.length > 100 ? "..." : ""}`}
+          subtitle={`Ready to extract from: ${searchText.substring(0, 100)}${
+            searchText.length > 100 ? "..." : ""
+          }`}
           icon={{ source: Icon.Sparkles, tintColor: "blue" }}
           actions={
             <ActionPanel>

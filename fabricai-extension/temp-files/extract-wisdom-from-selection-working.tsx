@@ -14,7 +14,9 @@ interface Arguments {
   text?: string;
 }
 
-export default async function ExtractWisdomFromSelection(props: { arguments: Arguments }) {
+export default async function ExtractWisdomFromSelection(props: {
+  arguments: Arguments;
+}) {
   const { text } = props.arguments;
   const preferences = getPreferenceValues<Preferences>();
 
@@ -37,23 +39,28 @@ export default async function ExtractWisdomFromSelection(props: { arguments: Arg
     try {
       await execAsync(`${fabricPath} --version`);
     } catch {
-      await showHUD("❌ Fabric AI not found. Install with: pip install fabric-ai");
+      await showHUD(
+        "❌ Fabric AI not found. Install with: pip install fabric-ai",
+      );
       return;
     }
 
     // Prepare content
     const maxLength = parseInt(preferences.maxContentLength || "10000");
-    const processedContent = content.length > maxLength 
-      ? content.substring(0, maxLength) + "..."
-      : content;
+    const processedContent =
+      content.length > maxLength
+        ? content.substring(0, maxLength) + "..."
+        : content;
 
     // Execute Fabric AI
     const timeout = parseInt(preferences.timeoutSeconds || "30") * 1000;
-    const command = `echo ${JSON.stringify(processedContent)} | ${fabricPath} --pattern extract_wisdom`;
-    
-    const { stdout, stderr } = await execAsync(command, { 
+    const command = `echo ${JSON.stringify(
+      processedContent,
+    )} | ${fabricPath} --pattern extract_wisdom`;
+
+    const { stdout, stderr } = await execAsync(command, {
       timeout,
-      maxBuffer: 1024 * 1024 // 1MB buffer
+      maxBuffer: 1024 * 1024, // 1MB buffer
     });
 
     if (stderr && !stdout) {
@@ -70,7 +77,6 @@ export default async function ExtractWisdomFromSelection(props: { arguments: Arg
     // Copy wisdom to clipboard
     await Clipboard.copy(wisdom);
     await showHUD("✅ Wisdom extracted and copied to clipboard!");
-
   } catch (error: any) {
     const errorMessage = error.message || "Unknown error occurred";
     await showHUD(`❌ Error: ${errorMessage.substring(0, 100)}`);
