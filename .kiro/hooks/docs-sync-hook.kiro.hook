@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "name": "Documentation Sync",
-  "description": "Listens to TypeScript source files, configuration files, package files, and new feature specifications (Notion integration, pattern registry) and triggers documentation updates to reflect current project state and milestone achievements.",
+  "description": "Listens to TypeScript source files, configuration files, package files, custom patterns, and feature specifications for the 4 active features (custom-pattern-creation, pattern-registry-framework, notion-database-integration, notion-watcher-automation) and triggers documentation updates to reflect current development state.",
   "version": "1",
   "when": {
     "type": "fileEdited",
@@ -16,15 +16,21 @@
       "raycast-fabricAI/tsconfig.json",
       "fabricai-extension/.eslintrc.js",
       "fabricai-extension/jest.config.js",
+      ".kiro/specs/custom-pattern-creation/**/*.md",
+      ".kiro/specs/pattern-registry-framework/**/*.md",
       ".kiro/specs/notion-database-integration/**/*.md",
       ".kiro/specs/notion-watcher-automation/**/*.md",
-      ".kiro/specs/pattern-registry-framework/**/*.md",
-      "src/notion-integration/**/*.ts",
-      "src/pattern-creation/**/*.ts"
+      "src/pattern-creation/**/*.ts",
+      "patterns/*.md",
+      "patterns/test-samples/*.md",
+      "demo-*.js",
+      "test-*.js",
+      "validate-*.js",
+      "verify-*.js"
     ]
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Source code, configuration files, or feature specifications have been modified in the Raycast Fabric AI extension project. The project has achieved a major milestone with Phase 1 completion (core extract wisdom functionality) and is now in Phase 2 development (Notion integration features). Please review the changes and update the documentation accordingly:\n\n1. Update README.md files to reflect:\n   - Milestone achievement: Phase 1 complete with extract wisdom + CSV export\n   - Phase 2 features: Notion database integration, Notion watcher automation, Pattern registry framework\n   - Current implementation status and capabilities\n\n2. Ensure documentation accurately represents:\n   - New Notion integration features and their development status\n   - Pattern creation and chaining capabilities\n   - Updated installation and configuration instructions\n   - Any new commands, components, or functionality\n\n3. Maintain consistency between main README.md and fabricai-extension/README.md\n\n4. Update CHANGELOG.md to reflect milestone completion and new feature roadmap"
+    "prompt": "Source code, configuration files, custom patterns, or feature specifications have been modified in the Raycast Fabric AI extension project. The project has completed Phase 2 (Pattern Creation Framework) and is actively developing 4 major features. Please review the changes and update the documentation accordingly:\n\n1. Update README.md files to reflect:\n   - Phase 2 Complete: Pattern Creation Framework with 15+ TypeScript classes\n   - 4 Production-Ready Custom Patterns: wireframe analysis, copywriting scoring, StoryBrand optimization, competitive audit\n   - Active Development: custom-pattern-creation, pattern-registry-framework, notion-database-integration, notion-watcher-automation\n   - Current implementation status and test coverage\n\n2. Ensure documentation accurately represents:\n   - Pattern creation framework capabilities and TypeScript class structure\n   - Knowledge base system with comprehensive test suite\n   - Custom pattern implementations and test samples\n   - Export integration (CSV/Notion) and chain compatibility\n   - Updated installation and configuration instructions\n\n3. Maintain consistency between main README.md and fabricai-extension/README.md\n\n4. Update CHANGELOG.md to reflect Phase 2 completion and Phase 3 development progress"
   }
 }
