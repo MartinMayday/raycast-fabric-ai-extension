@@ -65,8 +65,9 @@ class DocumentationGeneratorDemo {
       bestPractices,
       troubleshooting
     };
-  }  // G
-enerate pattern overview
+  }
+
+  // Generate pattern overview
   generatePatternOverview(patternName, patternContent, patternMetadata) {
     const purpose = this.extractPurpose(patternContent);
     const description = this.extractDescription(patternContent);
@@ -459,4 +460,261 @@ etermine output format based on description
     };
 
     return JSON.stringify(structure, null, 2);
+  } 
+ // Generate pattern examples
+  generatePatternExamples(patternName, samplesContent) {
+    const examples = [];
+
+    if (samplesContent) {
+      examples.push({
+        title: 'E-commerce Landing Page Analysis',
+        scenario: 'Analyzing an e-commerce product page for conversion optimization',
+        input: 'Product page with navigation, product gallery, details, and purchase flow...',
+        output: 'Comprehensive analysis with UX scores, navigation assessment, and conversion recommendations...',
+        explanation: 'This example demonstrates how the pattern analyzes e-commerce pages for optimal user experience.',
+        tips: [
+          'Notice the structured output format with clear sections',
+          'Pay attention to numerical scores for objective assessment',
+          'Use priority recommendations to guide implementation'
+        ]
+      });
+
+      examples.push({
+        title: 'SaaS Landing Page Analysis',
+        scenario: 'Evaluating a SaaS landing page for lead generation effectiveness',
+        input: 'SaaS landing page with hero section, features, pricing, and signup form...',
+        output: 'Detailed analysis covering messaging clarity, feature presentation, and conversion funnel optimization...',
+        explanation: 'This example shows pattern application to SaaS landing pages with focus on lead generation.',
+        tips: [
+          'Review all analysis sections for comprehensive insights',
+          'Focus on high-priority recommendations first',
+          'Consider business context when implementing suggestions'
+        ]
+      });
+    }
+
+    return examples;
   }
+
+  // Generate best practices
+  generateBestPractices(patternName, patternContent) {
+    const practices = [
+      {
+        category: 'Input Preparation',
+        title: 'Provide Complete and Detailed Content',
+        description: 'Ensure input content is comprehensive and well-structured for optimal analysis.',
+        doThis: [
+          'Include all relevant content sections',
+          'Provide context and background information',
+          'Use clear formatting and structure'
+        ],
+        avoidThis: [
+          'Submitting incomplete or fragmented content',
+          'Using unclear or ambiguous language',
+          'Omitting important context or details'
+        ]
+      },
+      {
+        category: 'Usage',
+        title: 'Review All Output Sections',
+        description: 'Examine each section of the analysis for comprehensive insights.',
+        doThis: [
+          'Read through all analysis sections',
+          'Pay attention to scoring and ratings',
+          'Prioritize recommendations based on impact'
+        ],
+        avoidThis: [
+          'Focusing only on overall scores',
+          'Ignoring detailed recommendations',
+          'Skipping lower-priority suggestions'
+        ]
+      }
+    ];
+
+    return practices;
+  }
+
+  // Generate troubleshooting guide
+  generateTroubleshootingGuide(patternName, patternContent) {
+    return [
+      {
+        issue: 'Low Quality Analysis Results',
+        symptoms: [
+          'Generic or vague recommendations',
+          'Low confidence scores',
+          'Missing specific insights'
+        ],
+        causes: [
+          'Insufficient input content',
+          'Poor content quality or structure',
+          'Missing context or background information'
+        ],
+        solutions: [
+          'Provide more detailed and comprehensive input',
+          'Include relevant context and background',
+          'Ensure content is well-structured and clear'
+        ],
+        prevention: [
+          'Review input content before analysis',
+          'Include all relevant sections and elements',
+          'Provide clear context and objectives'
+        ]
+      }
+    ];
+  }  /
+/ Helper methods
+  formatDisplayName(patternName) {
+    return patternName
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  }
+
+  // Demo the complete documentation system
+  async demonstrateDocumentationGeneration() {
+    console.log('📋 Loading Pattern Files...');
+    const { patterns, samples } = this.loadPatternFiles();
+    
+    console.log('\\n🔄 Processing Pattern Documentation...');
+    
+    const patternConfigs = [
+      { 
+        name: 'analyze_wireframe_flow', 
+        key: 'wireframe',
+        metadata: { 
+          displayName: 'Analyze Wireframe Flow', 
+          category: 'UX Analysis', 
+          version: '1.0.0',
+          hasScoring: true,
+          hasPrioritization: true
+        }
+      },
+      { 
+        name: 'analyze_copywriting_score', 
+        key: 'copywriting',
+        metadata: { 
+          displayName: 'Analyze Copywriting Score', 
+          category: 'Content Analysis', 
+          version: '1.0.0',
+          hasScoring: true,
+          hasPrioritization: true
+        }
+      },
+      { 
+        name: 'create_storybrand_variant', 
+        key: 'storybrand',
+        metadata: { 
+          displayName: 'Create StoryBrand Variant', 
+          category: 'Marketing Analysis', 
+          version: '1.0.0',
+          hasScoring: true,
+          hasPrioritization: true
+        }
+      },
+      { 
+        name: 'create_competitive_audit', 
+        key: 'competitive',
+        metadata: { 
+          displayName: 'Create Competitive Audit', 
+          category: 'Business Analysis', 
+          version: '1.0.0',
+          hasScoring: true,
+          hasPrioritization: true
+        }
+      }
+    ];
+
+    const documentations = [];
+
+    patternConfigs.forEach(config => {
+      const patternContent = patterns[config.key];
+      const samplesContent = samples[config.key];
+
+      if (patternContent) {
+        console.log(`\\n📝 Processing: ${config.metadata.displayName}`);
+        
+        const documentation = this.generatePatternDocumentation(
+          config.name,
+          patternContent,
+          config.metadata,
+          samplesContent
+        );
+
+        documentations.push(documentation);
+
+        console.log(`   ✅ Generated comprehensive documentation`);
+        console.log(`   📊 Overview: ${documentation.overview.keyFeatures.length} features, ${documentation.overview.benefits.length} benefits`);
+        console.log(`   📋 Usage: ${documentation.usage.inputRequirements.length} requirements, ${documentation.usage.commonParameters.length} parameters`);
+        console.log(`   📄 Output: ${documentation.outputFormat.sections.length} sections, ${documentation.outputFormat.exportFormats.length} export formats`);
+        console.log(`   💡 Examples: ${documentation.examples.length} examples`);
+        console.log(`   ✨ Best Practices: ${documentation.bestPractices.length} practices`);
+        console.log(`   🔧 Troubleshooting: ${documentation.troubleshooting.length} guides`);
+      } else {
+        console.log(`   ⚠️  Pattern file not found: ${config.name}`);
+      }
+    });
+
+    return documentations;
+  }  
+// Run the complete demo
+  async runDemo() {
+    console.log('🎯 Demonstrating Automatic Documentation Generation System\\n');
+    
+    const documentations = await this.demonstrateDocumentationGeneration();
+    
+    console.log('\\n📊 Documentation Generation Summary:');
+    console.log(`   📦 Patterns documented: ${documentations.length}`);
+    console.log(`   📄 Total documentation sections: ${documentations.reduce((sum, doc) => sum + 7, 0)}`); // 7 sections per doc
+    console.log(`   💡 Total examples: ${documentations.reduce((sum, doc) => sum + doc.examples.length, 0)}`);
+    console.log(`   ✨ Total best practices: ${documentations.reduce((sum, doc) => sum + doc.bestPractices.length, 0)}`);
+    console.log(`   🔧 Total troubleshooting guides: ${documentations.reduce((sum, doc) => sum + doc.troubleshooting.length, 0)}`);
+
+    console.log('\\n🔧 Documentation Capabilities:');
+    console.log('   ✅ Automatic extraction of pattern purpose and description');
+    console.log('   ✅ Smart categorization and target audience identification');
+    console.log('   ✅ Key features and benefits generation from pattern content');
+    console.log('   ✅ Usage examples with input/output demonstrations');
+    console.log('   ✅ Comprehensive output format documentation');
+    console.log('   ✅ Scoring system and prioritization explanations');
+    console.log('   ✅ Export format documentation for CSV, Notion, and JSON');
+    console.log('   ✅ Best practices generation with actionable guidance');
+    console.log('   ✅ Troubleshooting guides with symptoms, causes, and solutions');
+    console.log('   ✅ Professional markdown rendering for publication');
+
+    console.log('\\n📈 Documentation Quality Features:');
+    console.log('   📊 Structured sections with consistent formatting');
+    console.log('   💡 Real-world examples and usage scenarios');
+    console.log('   🎯 Actionable best practices and recommendations');
+    console.log('   🔧 Comprehensive troubleshooting and problem-solving');
+    console.log('   📄 Professional markdown output ready for publication');
+    console.log('   🔄 Automatic updates when patterns change');
+
+    if (documentations.length > 0) {
+      const sampleDoc = documentations[0];
+      console.log('\\n📝 Sample Documentation Preview:');
+      console.log(`   Pattern: ${sampleDoc.displayName}`);
+      console.log(`   Category: ${sampleDoc.category}`);
+      console.log(`   Purpose: ${sampleDoc.overview.purpose.substring(0, 100)}...`);
+      console.log(`   Features: ${sampleDoc.overview.keyFeatures.length} key features identified`);
+      console.log(`   Benefits: ${sampleDoc.overview.benefits.length} benefits documented`);
+      console.log(`   Output Sections: ${sampleDoc.outputFormat.sections.length} sections analyzed`);
+    }
+
+    console.log('\\n' + '='.repeat(60));
+    console.log('🎉 DocumentationGenerator Demo Complete!');
+    console.log('\\n✨ Key Features Demonstrated:');
+    console.log('✅ Comprehensive pattern documentation generation');
+    console.log('✅ Automatic extraction of pattern metadata and features');
+    console.log('✅ Usage documentation with examples and requirements');
+    console.log('✅ Output format documentation with scoring and export options');
+    console.log('✅ Best practices generation with actionable guidance');
+    console.log('✅ Troubleshooting guides with comprehensive solutions');
+    console.log('✅ Professional markdown rendering for publication');
+    console.log('✅ Multiple pattern documentation support');
+    console.log('\\n🚀 Ready for integration with pattern creation workflow!');
+  }
+}
+
+// Run the demo
+const demo = new DocumentationGeneratorDemo();
+demo.runDemo();

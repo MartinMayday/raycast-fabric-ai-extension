@@ -1,7 +1,7 @@
 {
   "enabled": true,
   "name": "Documentation Sync",
-  "description": "Listens to TypeScript source files, configuration files, and package files in the Raycast extension projects and triggers documentation updates in README and docs folder when changes occur.",
+  "description": "Listens to TypeScript source files, configuration files, package files, and new feature specifications (Notion integration, pattern registry) and triggers documentation updates to reflect current project state and milestone achievements.",
   "version": "1",
   "when": {
     "type": "fileEdited",
@@ -15,11 +15,16 @@
       "fabricai-extension/tsconfig.json",
       "raycast-fabricAI/tsconfig.json",
       "fabricai-extension/.eslintrc.js",
-      "fabricai-extension/jest.config.js"
+      "fabricai-extension/jest.config.js",
+      ".kiro/specs/notion-database-integration/**/*.md",
+      ".kiro/specs/notion-watcher-automation/**/*.md",
+      ".kiro/specs/pattern-registry-framework/**/*.md",
+      "src/notion-integration/**/*.ts",
+      "src/pattern-creation/**/*.ts"
     ]
   },
   "then": {
     "type": "askAgent",
-    "prompt": "Source code or configuration files have been modified in the Raycast Fabric AI extension project. Please review the changes and update the documentation accordingly. Focus on updating the README.md files and any documentation in the docs/ folders to reflect any new features, API changes, configuration updates, or structural modifications. Ensure the documentation accurately represents the current state of the codebase, including any new commands, components, or functionality that may have been added or modified."
+    "prompt": "Source code, configuration files, or feature specifications have been modified in the Raycast Fabric AI extension project. The project has achieved a major milestone with Phase 1 completion (core extract wisdom functionality) and is now in Phase 2 development (Notion integration features). Please review the changes and update the documentation accordingly:\n\n1. Update README.md files to reflect:\n   - Milestone achievement: Phase 1 complete with extract wisdom + CSV export\n   - Phase 2 features: Notion database integration, Notion watcher automation, Pattern registry framework\n   - Current implementation status and capabilities\n\n2. Ensure documentation accurately represents:\n   - New Notion integration features and their development status\n   - Pattern creation and chaining capabilities\n   - Updated installation and configuration instructions\n   - Any new commands, components, or functionality\n\n3. Maintain consistency between main README.md and fabricai-extension/README.md\n\n4. Update CHANGELOG.md to reflect milestone completion and new feature roadmap"
   }
 }
