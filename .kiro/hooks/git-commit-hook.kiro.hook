@@ -1,0 +1,28 @@
+{
+  "enabled": true,
+  "name": "Git Commit Automation",
+  "description": "Automatically commits changes to the repository when significant milestones are reached or new features are completed, including the Raycast extension completion and new Notion integration features.",
+  "version": "1",
+  "when": {
+    "type": "fileEdited",
+    "patterns": [
+      "fabricai-extension/src/**/*.tsx",
+      "fabricai-extension/src/**/*.ts",
+      "fabricai-extension/package.json",
+      "fabricai-extension/README.md",
+      "fabricai-extension/CHANGELOG.md",
+      "README.md",
+      ".kiro/specs/notion-database-integration/**/*.md",
+      ".kiro/specs/notion-watcher-automation/**/*.md",
+      ".kiro/specs/pattern-registry-framework/**/*.md",
+      "src/notion-integration/**/*.ts",
+      "src/notion-integration/**/*.js",
+      "src/pattern-creation/**/*.ts",
+      "src/pattern-creation/**/*.js"
+    ]
+  },
+  "then": {
+    "type": "askAgent",
+    "prompt": "Significant changes have been detected in the Raycast Fabric AI extension project. The project has reached a major milestone with the completion of the core extract wisdom functionality and is now expanding with three new major features: notion-database-integration, notion-watcher-automation, and pattern-registry-framework. Please:\n\n1. Review the changes and create an appropriate git commit message that reflects:\n   - Milestone completion: Raycast extension with extract wisdom + send to database (CSV backup)\n   - New feature additions: Notion database integration, Notion watcher automation, Pattern registry framework\n   - Any specific implementation updates or bug fixes\n\n2. Execute the git commit with a descriptive message that captures the current development state\n\n3. Update the CHANGELOG.md to reflect the milestone achievement and new feature roadmap\n\n4. Ensure the README.md accurately reflects the current capabilities and upcoming features\n\nFocus on celebrating the milestone completion while setting the stage for the next phase of development with the Notion integrations and pattern framework."
+  }
+}

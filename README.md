@@ -4,6 +4,7 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
 
 ## 🚀 Features
 
+### ✅ Core Features (Milestone Completed)
 - **Extract Wisdom**: Process any text content through Fabric AI's `extract_wisdom` pattern
 - **Advanced Process Control**: Spawn-based process management for superior reliability and real-time feedback
 - **Structured Output Parsing**: Comprehensive parsing of wisdom into organized sections (summary, ideas, insights, quotes, habits, facts, references, takeaway, recommendations)
@@ -15,6 +16,11 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
 - **Selection Processing**: Extract wisdom directly from selected text in any application
 - **History Management**: Save, search, and manage extraction history
 - **Stream Processing**: Real-time stdout/stderr handling for immediate feedback
+
+### 🚧 New Features (In Development)
+- **Notion Database Integration**: Send extracted wisdom directly to Notion databases with CSV backup for software independence
+- **Notion Watcher Automation**: Automated monitoring and processing of URLs saved to Notion databases
+- **Pattern Registry Framework**: Advanced pattern chaining and custom pattern creation system
 
 ## 📦 Installation
 
@@ -207,13 +213,38 @@ If you encounter any issues or have questions:
 
 **Fabric AI Installation**: Verify installation with `fabric --version` and ensure the `extract_wisdom` pattern is available with `fabric --list`
 
-## 🔮 Roadmap
+## 🎯 Milestone Achievement
 
-- [ ] Multiple Fabric AI patterns support
+**✅ Phase 1 Complete**: Core Raycast extension with extract wisdom functionality and CSV export system
+
+## 🔮 Current Development (Phase 2)
+
+### 🗄️ Notion Database Integration
+- **Send to Database**: Unified export to both Notion database (primary) and CSV file (backup)
+- **Smart Mapping**: Automatic mapping of 20-column CSV structure to Notion database properties
+- **Secure Configuration**: Notion API token and database ID management through Raycast preferences
+- **Error Handling**: Comprehensive error handling with user-friendly guidance
+
+### 🤖 Notion Watcher Automation
+- **Automated Monitoring**: Intelligent detection of new URLs added to Notion databases
+- **Content Type Analysis**: Automatic content classification (video, repo, webshop, landingpage, unspecified)
+- **Pattern Chain Execution**: Tailored analysis workflows for different content types
+- **Priority Insights**: Automated extraction to help prioritize content consumption
+
+### 🔧 Pattern Registry Framework
+- **Custom Pattern Creation**: Tools for creating and managing custom Fabric AI patterns
+- **Pattern Chaining**: Advanced workflows combining multiple patterns for comprehensive analysis
+- **Quality Assurance**: Automated testing and validation for custom patterns
+- **Export Integration**: Seamless integration with existing export systems
+
+## 🚀 Future Roadmap (Phase 3+)
+
+- [ ] Multiple Fabric AI patterns support (expanded beyond extract_wisdom)
 - [ ] Batch processing capabilities
-- [ ] Custom pattern creation
+- [ ] Advanced pattern marketplace
 - [ ] Cloud synchronization
 - [ ] Mobile app integration
+- [ ] AI-powered pattern recommendations
 
 ---
 

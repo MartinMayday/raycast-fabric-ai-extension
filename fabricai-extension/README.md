@@ -4,7 +4,9 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
 
 ## Features
 
-### 🧠 Intelligent Wisdom Extraction
+### ✅ Core Features (Milestone Completed - Phase 1)
+
+#### 🧠 Intelligent Wisdom Extraction
 - Extract valuable insights from any text using Fabric AI's `extract_wisdom` pattern
 - Support for multiple content types: Plain text, HTML, Markdown, URLs, and YouTube videos with automatic detection
 - **Structured Output Parsing**: Advanced parsing of wisdom into organized sections (summary, ideas, insights, quotes, habits, facts, references, takeaway, recommendations)
@@ -57,25 +59,50 @@ A powerful Raycast extension that integrates with [Fabric AI](https://github.com
 - Automatic retry mechanisms for transient failures
 - Comprehensive error logging and debugging
 
-### 📊 Enhanced Production Features (Latest Implementation)
+#### 📊 Enhanced Production Features (Latest Implementation)
 
-#### Structured Data Analysis
+##### Structured Data Analysis
 - **Comprehensive Output Parsing**: Automatic parsing of Fabric AI's structured wisdom output into organized components
 - **Rich Data Model**: Extended data structure with 15+ fields including summary, ideas, insights, quotes, habits, facts, references, takeaway, and recommendations
 - **Content Metadata Extraction**: Automatic extraction of author information, hooks, CTA URLs, and content classification
 - **YouTube Metadata**: Dual extraction of video title and channel information for comprehensive content analysis
 
-#### Professional Export System
+##### Professional Export System
 - **20-Column CSV Export**: Structured spreadsheet export matching professional content analysis workflows
 - **Automatic Data Escaping**: Proper CSV formatting with quote escaping and data sanitization
 - **Incremental Data Appending**: Automatic header management and data appending for continuous analysis
 - **Export Path Configuration**: Configurable export directory with automatic directory creation
 
-#### Advanced Debug Infrastructure
+##### Advanced Debug Infrastructure
 - **File-Based Logging**: Persistent logging to Raycast's support directory with timestamp tracking
 - **Comprehensive Debug Information**: Detailed process tracking, command execution logs, and error classification
 - **Log Sharing**: One-click debug log copying to clipboard for troubleshooting and support
 - **Production Monitoring**: Real-time process monitoring with detailed feedback and error tracking
+
+### 🚧 Phase 2 Features (In Development)
+
+#### 🗄️ Notion Database Integration
+- **Send to Database**: Unified export action that saves to both Notion database (primary) and CSV file (backup) simultaneously
+- **Smart Property Mapping**: Automatic mapping of the 20-column CSV structure to Notion database properties
+- **Secure Configuration**: Notion API token and database ID management through Raycast preferences
+- **Software Independence**: Maintains CSV backup ensuring data portability and independence from any single platform
+- **Error Handling**: Comprehensive error handling with user-friendly guidance for setup and troubleshooting
+
+#### 🤖 Notion Watcher Automation
+- **Automated URL Monitoring**: Intelligent system that monitors Notion databases for new URLs and automatically processes them
+- **Content Type Classification**: Automatic detection and classification of content (video, repo, webshop, landingpage, unspecified)
+- **Pattern Chain Workflows**: Tailored analysis workflows for different content types:
+  - **Video**: extract_wisdom_dm → extract_questions → extract_primary_problem → extract_primary_solution → extract_instructions
+  - **Repository**: explain_project → extract_instructions → analyze_tech_impact → create_coding_feature → extract_business_ideas
+  - **Webshop**: extract_business_ideas → analyze_sales_call → create_hormozi_offer → extract_patterns → analyze_risk
+  - **Landing Page**: convert_to_markdown → analyze_wireframe_flow → analyze_copywriting_score → create_storybrand_variant → create_competitive_audit
+- **Priority Intelligence**: Automated extraction of insights to help prioritize which content to consume based on extracted value
+
+#### 🔧 Pattern Registry Framework
+- **Custom Pattern Creation**: Advanced tools for creating, testing, and managing custom Fabric AI patterns
+- **Pattern Chaining**: Multi-pattern workflows that combine multiple analysis patterns for comprehensive insights
+- **Quality Assurance**: Automated testing and validation systems for custom patterns
+- **Registry Integration**: Seamless pattern discovery, sharing, and deployment system
 
 ## Installation
 

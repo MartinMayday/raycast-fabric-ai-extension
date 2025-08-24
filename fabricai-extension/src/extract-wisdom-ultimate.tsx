@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import {
   List,
   ActionPanel,
@@ -55,6 +55,15 @@ export default function ExtractWisdomUltimate() {
   const [debugLogs, setDebugLogs] = useState<string[]>([]);
 
   const preferences = getPreferenceValues<Preferences>();
+
+  // Initialize debug logs when component loads
+  React.useEffect(() => {
+    addDebugLog('Extract Wisdom extension initialized');
+    addDebugLog(`Fabric path: ${preferences.fabricInstallPath || 'default'}`);
+    addDebugLog(`Max content length: ${preferences.maxContentLength || '2000'}`);
+    addDebugLog(`Timeout: ${preferences.timeoutSeconds || '60'} seconds`);
+    addDebugLog(`Export path: ${preferences.exportPath || 'default'}`);
+  }, []);
 
   const addDebugLog = (message: string) => {
     const timestamp = new Date().toISOString();
@@ -438,8 +447,18 @@ export default function ExtractWisdomUltimate() {
 
   const sendDebugLogs = async () => {
     try {
-      addDebugLog('Copying debug logs to clipboard');
+      addDebugLog('User requested debug logs copy');
       const logsContent = debugLogs.join('\n');
+      
+      if (debugLogs.length === 0) {
+        await showToast({
+          style: Toast.Style.Failure,
+          title: "No Debug Logs",
+          message: "No debug logs available to copy",
+        });
+        return;
+      }
+      
       await Clipboard.copy(logsContent);
       
       await showToast({
@@ -447,13 +466,88 @@ export default function ExtractWisdomUltimate() {
         title: "Debug Logs Copied",
         message: `${debugLogs.length} log entries copied to clipboard`,
       });
+      
+      addDebugLog(`Successfully copied ${debugLogs.length} log entries to clipboard`);
     } catch (error: any) {
+      addDebugLog(`Failed to copy logs: ${error.message}`);
       await showToast({
         style: Toast.Style.Failure,
         title: "Failed to Copy Logs",
         message: error.message,
       });
     }
+  };
+
+  const testDebugSystem = async () => {
+    addDebugLog('Testing debug system functionality');
+    addDebugLog('Debug system test: Adding sample log entries');
+    addDebugLog(`Current time: ${new Date().toLocaleString()}`);
+    addDebugLog(`Environment support path: ${environment.supportPath}`);
+    addDebugLog('Debug system test completed');
+    
+    await showToast({
+      style: Toast.Style.Success,
+      title: "Debug Test Complete",
+      message: `Added 5 test log entries. Total: ${debugLogs.length + 5}`,
+    });
+  };
+
+  const parseWisdomSections = (wisdom: string): { title: string; content: string; icon: string }[] => {
+    const sections: { title: string; content: string; icon: string }[] = [];
+    const lines = wisdom.split('\n');
+    let currentSection = '';
+    let currentContent: string[] = [];
+    
+    // Icon mapping for different sections
+    const iconMap: { [key: string]: string } = {
+      'summary': Icon.Text,
+      'ideas': Icon.Lightbulb,
+      'insights': Icon.Eye,
+      'quotes': Icon.QuoteBlock,
+      'habits': Icon.Repeat,
+      'facts': Icon.Info,
+      'references': Icon.Link,
+      'takeaway': Icon.Star,
+      'recommendations': Icon.CheckCircle,
+      'one-sentence': Icon.Star,
+      'conclusion': Icon.Checkmark,
+      'key points': Icon.BulletPoints,
+      'main points': Icon.BulletPoints,
+      'action items': Icon.CheckList,
+      'next steps': Icon.ArrowRight,
+    };
+    
+    for (const line of lines) {
+      if (line.startsWith('# ')) {
+        // Save previous section if it exists
+        if (currentSection && currentContent.length > 0) {
+          const sectionKey = currentSection.toLowerCase().replace(/[^a-z\s]/g, '').trim();
+          sections.push({
+            title: currentSection,
+            content: currentContent.join('\n').trim(),
+            icon: iconMap[sectionKey] || Icon.Document
+          });
+        }
+        
+        // Start new section
+        currentSection = line.substring(2).trim();
+        currentContent = [];
+      } else if (currentSection && line.trim()) {
+        currentContent.push(line);
+      }
+    }
+    
+    // Add the last section
+    if (currentSection && currentContent.length > 0) {
+      const sectionKey = currentSection.toLowerCase().replace(/[^a-z\s]/g, '').trim();
+      sections.push({
+        title: currentSection,
+        content: currentContent.join('\n').trim(),
+        icon: iconMap[sectionKey] || Icon.Document
+      });
+    }
+    
+    return sections;
   };
 
   const testFabricConnection = async () => {
@@ -490,6 +584,8 @@ export default function ExtractWisdomUltimate() {
   };
 
   if (extractedWisdom) {
+    const wisdomSections = parseWisdomSections(extractedWisdom.wisdom);
+    
     return (
       <Detail
         markdown={`# Extracted Wisdom
@@ -523,20 +619,35 @@ ${extractedWisdom.wisdom}
               onAction={() => exportToSpreadsheet(extractedWisdom)}
             />
             <Action
-              title="Copy Wisdom"
+              title="Copy Full Wisdom"
               icon={Icon.Clipboard}
-              onAction={() => Clipboard.copy(extractedWisdom.wisdom)}
+              onAction={() => {
+                Clipboard.copy(extractedWisdom.wisdom);
+                showToast({
+                  style: Toast.Style.Success,
+                  title: "Copied",
+                  message: "Full wisdom copied to clipboard",
+                });
+              }}
             />
-            <Action
-              title="Copy Summary"
-              icon={Icon.Text}
-              onAction={() => Clipboard.copy(extractedWisdom.summary || '')}
-            />
-            <Action
-              title="Copy Takeaway"
-              icon={Icon.Star}
-              onAction={() => Clipboard.copy(extractedWisdom.takeaway || '')}
-            />
+            
+            {/* Dynamic actions for each section */}
+            {wisdomSections.map((section, index) => (
+              <Action
+                key={index}
+                title={`Copy ${section.title}`}
+                icon={section.icon}
+                onAction={() => {
+                  Clipboard.copy(section.content);
+                  showToast({
+                    style: Toast.Style.Success,
+                    title: "Copied",
+                    message: `${section.title} copied to clipboard`,
+                  });
+                }}
+              />
+            ))}
+            
             <Action
               title="Back to Input"
               icon={Icon.ArrowLeft}
@@ -608,6 +719,11 @@ ${extractedWisdom.wisdom}
               title="Copy Debug Logs"
               icon={Icon.Bug}
               onAction={sendDebugLogs}
+            />
+            <Action
+              title="Test Debug System"
+              icon={Icon.ExclamationMark}
+              onAction={testDebugSystem}
             />
           </ActionPanel>
         }

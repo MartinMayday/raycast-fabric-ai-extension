@@ -9,9 +9,13 @@ import {
   Icon,
   Detail,
   getPreferenceValues,
+  LocalStorage,
 } from "@raycast/api";
 import { exec } from "child_process";
 import { promisify } from "util";
+import { writeFileSync } from "fs";
+import { homedir } from "os";
+import { join } from "path";
 
 const execAsync = promisify(exec);
 
@@ -26,7 +30,24 @@ interface ExtractedWisdom {
   content: string;
   wisdom: string;
   timestamp: Date;
+  sourceType?: string;
+  sourceUrl?: string;
 }
+
+// Debug logging functions
+const addDebugLog = async (message: string) => {
+  try {
+    const timestamp = new Date().toISOString();
+    const logEntry = `[${timestamp}] ${message}`;
+    
+    const existingLogs = await LocalStorage.getItem<string>("debug_logs") || "";
+    const newLogs = existingLogs ? `${existingLogs}\n${logEntry}` : logEntry;
+    
+    await LocalStorage.setItem("debug_logs", newLogs);
+  } catch (error) {
+    console.error("Failed to add debug log:", error);
+  }
+};
 
 export default function ExtractWisdomSimple() {
   const [searchText, setSearchText] = useState("");
